@@ -1,0 +1,6 @@
+[submodule "terraform/modules/aws-tf-module-ecs"]
+	path = terraform/modules/aws-tf-module-ecs
+	url = https://github.com/KBC-Group-CSOB/aws-tf-module-ecs
+[submodule "terraform/modules/aws-tf-module-kms"]
+	path = terraform/modules/aws-tf-module-kms
+	url = https://github.com/KBC-Group-CSOB/aws-tf-module-kms

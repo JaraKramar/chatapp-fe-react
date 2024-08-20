@@ -1,0 +1,17 @@
+{
+  "RetroMAECS": {
+    "lib": "tokenizer",
+    "online_path": "Seznam/retromae-small-cs",
+    "local_path": "src/local_models/models--Seznam--retromae-small-cs/snapshots/4f8c5f2fbd11caa5dd49c3fe2ab1ad41d4509d08",
+    "s3_path": "csob-rag-dev-storage/models/models--Seznam--retromae-small-cs/snapshots/4f8c5f2fbd11caa5dd49c3fe2ab1ad41d4509d08",
+    "max_length": 512
+  },
+  "BAAI-bge-ms": {
+    "lib": "FlagEmbedding",
+    "online_path": "BAAI/bge-m3",
+    "local_path": "src/local_models/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181",
+    "s3_path": "s3://csob-rag-dev-storage/models/models--BAAI--bge-m3/snapshots/5617a9f61b028005a4858fdac845db406aefb181",
+    "max_length": 8192,
+    "batch_size": 12
+  }
+}

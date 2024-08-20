@@ -1,0 +1,8 @@
+haiku: Given the chat history and the user's last question that could reference the context in the chat history, ask a stand-alone question that can be understood without the chat history.
+       If there is no chat history, do not change the original question.
+       DO NOT answer the question, just rephrase it if necessary.
+       Respond only with the generated question.
+sonnet: Given the chat history and the user's last question that could reference the context in the chat history, ask a stand-alone question that can be understood without the chat history.
+        If there is no chat history, do not change the original question.
+        DO NOT answer the question, just rephrase it if necessary.
+        Respond only with the generated question."
