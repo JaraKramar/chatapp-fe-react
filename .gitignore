@@ -1,0 +1,7 @@
+terraform/*.pem
+terraform/*.lock.hcl
+__pycache__
+venv
+personal/
+*.pem
+*.whl
