@@ -1,7 +1,10 @@
 terraform/*.pem
 terraform/*.lock.hcl
+terraform/.terraform/
 __pycache__
 venv
 personal/
 *.pem
 *.whl
+.DS_Store
+terraform/modules

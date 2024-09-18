@@ -21,7 +21,7 @@ module "ecs_task" {
   task_containers = [
     {
       name               = "${var.project_name}-app"
-      image              = "${local.cicd_account_ecr_repo}/rrz-tf-stack-frontend:latest"
+      image              = "${local.cicd_account_ecr_repo}/rrz-tf-stack-frontend:latest2"
       cpu                = var.task_cpu
       memory             = var.task_memory
       memory_reservation = var.task_memory
@@ -34,7 +34,7 @@ module "ecs_task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/aws/ecs/${var.project_name}/${var.project_name}-app"
+          awslogs-group         = "/ecs/${var.project_name}/${var.project_name}-app"
           awslogs-region        = "eu-central-1"
           awslogs-create-group  = true
           awslogs-stream-prefix = "ecs"
@@ -52,7 +52,7 @@ module "ecs_service" {
   cluster_arn = module.ecs_cluster.arn
 
   create_iam_role = false
-  iam_role_arn    = "arn:aws:iam::975050254771:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
+  iam_role_arn    = "arn:aws:iam::891377142494:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
 
   create_task_exec_iam_role = false
   task_exec_iam_role_arn    = module.ecs_task.execution_role_arn

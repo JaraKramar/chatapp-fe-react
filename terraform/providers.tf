@@ -7,9 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "csob-rag-dev-tf-backend"
-    key    = "v1/terraform.tfstate"
-    region = "eu-west-3"
+    bucket = "rrz-developer-tfstate"
+    key    = "dev01/eu-central-1/terraform/rrz-tf-stack-frontend/terraform.tfstate"
+    region = "eu-central-1"
+    profile = "rrzfe-l3"
   }
 
   required_version = ">= 1.0.0"
@@ -17,5 +18,5 @@ terraform {
 
 provider "aws" {
   region  = var.aws_region
-  profile = var.aws_profile
+  profile = "rrzfe-l3"
 }

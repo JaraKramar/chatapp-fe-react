@@ -4,3 +4,6 @@
 [submodule "terraform/modules/aws-tf-module-kms"]
 	path = terraform/modules/aws-tf-module-kms
 	url = https://github.com/KBC-Group-CSOB/aws-tf-module-kms
+[submodule "terraform/modules/aws-tf-module-api-gateway"]
+	path = terraform/modules/aws-tf-module-api-gateway
+	url = https://github.com/KBC-Group-CSOB/aws-tf-module-api-gateway

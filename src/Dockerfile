@@ -13,5 +13,5 @@ RUN pip3.11 install --trusted-host pypi.org --trusted-host https://download.pyto
 
 EXPOSE 80
 
-ENTRYPOINT ["streamlit", "run", "ChatApp.py", "--server.port=8080", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "ChatApp.py", "--server.port=80", "--server.address=0.0.0.0"]
 

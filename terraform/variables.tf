@@ -41,7 +41,7 @@ variable "project_name" {
 variable "task_container_port" {
   description = ""
   type        = number
-  default     = 8080
+  default     = 80
 }
 
 variable "ecs_service_role" {

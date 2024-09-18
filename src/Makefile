@@ -32,8 +32,8 @@ docker_login:
 
 
 docker_push:
-	docker tag $(IMAGE_NAME) $(AWS_ACCOUNT_CICD_NUM).dkr.ecr.eu-central-1.amazonaws.com/$(AWS_CICD_REPO_NAME):latest
-	docker push $(AWS_ACCOUNT_CICD_NUM).dkr.ecr.eu-central-1.amazonaws.com/$(AWS_CICD_REPO_NAME):latest
+	docker tag $(IMAGE_NAME) $(AWS_ACCOUNT_CICD_NUM).dkr.ecr.eu-central-1.amazonaws.com/$(AWS_CICD_REPO_NAME):latest2
+	docker push $(AWS_ACCOUNT_CICD_NUM).dkr.ecr.eu-central-1.amazonaws.com/$(AWS_CICD_REPO_NAME):latest2
 
 docker_clean:
 	docker rmi $(docker images -f dangling=true -q)
