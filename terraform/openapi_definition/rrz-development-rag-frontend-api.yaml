@@ -1,0 +1,153 @@
+openapi: 3.0.1
+info:
+  title: Flask Private API
+  description: REST API for static website
+  version: "1.0.0"
+paths:
+  /:
+    get:
+      summary: Root API
+      responses:
+        '200':
+          description: OK
+      x-amazon-apigateway-integration:
+        uri: "http://${ecs_nlb}/"
+        httpMethod: "GET"
+        type: "HTTP_PROXY"
+        passthroughBehavior: "WHEN_NO_MATCH"
+        connectionType: "VPC_LINK"
+        connectionId: ${aws_vpc_link} # Reference the VPC link
+        contentHandling: "CONVERT_TO_TEXT"
+  /ping:
+    get:
+      summary: Ping API
+      responses:
+        '200':
+          description: OK
+      x-amazon-apigateway-integration:
+        uri: "http://${ecs_nlb}/ping"
+        httpMethod: "GET"
+        type: "HTTP_PROXY"
+        passthroughBehavior: "WHEN_NO_MATCH"
+        connectionType: "VPC_LINK"
+        connectionId: ${aws_vpc_link} # Reference the VPC link
+        contentHandling: "CONVERT_TO_TEXT"
+  /respond:
+    post:
+      summary: Embed API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/respond'
+      responses:
+        '200':
+          description: OK
+      x-amazon-apigateway-integration:
+        uri: "http://${ecs_nlb}/respond"
+        httpMethod: "POST"
+        type: "HTTP_PROXY"
+        passthroughBehavior: "WHEN_NO_MATCH"
+        connectionType: "VPC_LINK"
+        connectionId: ${aws_vpc_link}
+        contentHandling: "CONVERT_TO_TEXT"
+  /ragrespond:
+    post:
+      summary: Embed API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ragrespond'
+      responses:
+        '200':
+          description: OK
+      x-amazon-apigateway-integration:
+        uri: "http://${ecs_nlb}/ragrespond"
+        httpMethod: "POST"
+        type: "HTTP_PROXY"
+        passthroughBehavior: "WHEN_NO_MATCH"
+        connectionType: "VPC_LINK"
+        connectionId: ${aws_vpc_link}
+        contentHandling: "CONVERT_TO_TEXT"
+  /embed_test:
+    get:
+      summary: Ping API
+      responses:
+        '200':
+          description: OK
+      x-amazon-apigateway-integration:
+        uri: "http://${ecs_nlb}/embed_test"
+        httpMethod: "GET"
+        type: "HTTP_PROXY"
+        passthroughBehavior: "WHEN_NO_MATCH"
+        connectionType: "VPC_LINK"
+        connectionId: ${aws_vpc_link} # Reference the VPC link
+        contentHandling: "CONVERT_TO_TEXT"
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: x-api-key
+      in: header
+  schemas:
+    respond:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: ""
+    ragrespond:
+      type: object
+      required:
+        - prompt
+        - session_id
+        - model_name
+      properties:
+        prompt:
+          type: object
+          description: ""
+        session_id:
+          type: string
+          description: ""
+        model_name:
+          type: string
+          description: ""
+
+
+
+
+
+
+
+
+
+
+/
+OPTIONS
+GET
+
+/static
+
+/js
+
+/{object}
+GET
+
+/media
+
+/{object}
+GET
+
+/logo192.png
+GET
+
+/favicon.ico
+GET
+
+/manifest.json
+GET
