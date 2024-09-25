@@ -71,3 +71,9 @@ variable "task_memory" {
   type = number
   default = 8192
 }
+
+variable "react_files" {
+  type    = string
+  default = "../react/build"
+
+}

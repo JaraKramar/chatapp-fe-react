@@ -7,3 +7,6 @@
 [submodule "terraform/modules/aws-tf-module-api-gateway"]
 	path = terraform/modules/aws-tf-module-api-gateway
 	url = https://github.com/KBC-Group-CSOB/aws-tf-module-api-gateway
+[submodule "terraform/modules/aws-tf-module-s3"]
+	path = terraform/modules/aws-tf-module-s3
+	url = https://github.com/KBC-Group-CSOB/aws-tf-module-s3.git

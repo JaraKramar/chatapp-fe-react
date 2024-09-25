@@ -1,6 +1,6 @@
 {
   "name": "chat",
-  "homepage": "/dev",
+  "homepage": "/development",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

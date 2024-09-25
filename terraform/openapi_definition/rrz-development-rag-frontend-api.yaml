@@ -1,153 +1,158 @@
-openapi: 3.0.1
+openapi: "3.0.1"
 info:
-  title: Flask Private API
-  description: REST API for static website
-  version: "1.0.0"
+  title: "fe_test"
+  version: "2024-09-25T12:04:38Z"
 paths:
   /:
     get:
-      summary: Root API
       responses:
-        '200':
-          description: OK
+        "200":
+          description: "200 response"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
       x-amazon-apigateway-integration:
-        uri: "http://${ecs_nlb}/"
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
         httpMethod: "GET"
-        type: "HTTP_PROXY"
-        passthroughBehavior: "WHEN_NO_MATCH"
-        connectionType: "VPC_LINK"
-        connectionId: ${aws_vpc_link} # Reference the VPC link
-        contentHandling: "CONVERT_TO_TEXT"
-  /ping:
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/index.html"
+        responses:
+          default:
+            statusCode: "200"
+            contentHandling: "CONVERT_TO_BINARY"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
+  /manifest.json:
     get:
-      summary: Ping API
       responses:
-        '200':
-          description: OK
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
       x-amazon-apigateway-integration:
-        uri: "http://${ecs_nlb}/ping"
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
         httpMethod: "GET"
-        type: "HTTP_PROXY"
-        passthroughBehavior: "WHEN_NO_MATCH"
-        connectionType: "VPC_LINK"
-        connectionId: ${aws_vpc_link} # Reference the VPC link
-        contentHandling: "CONVERT_TO_TEXT"
-  /respond:
-    post:
-      summary: Embed API
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/respond'
-      responses:
-        '200':
-          description: OK
-      x-amazon-apigateway-integration:
-        uri: "http://${ecs_nlb}/respond"
-        httpMethod: "POST"
-        type: "HTTP_PROXY"
-        passthroughBehavior: "WHEN_NO_MATCH"
-        connectionType: "VPC_LINK"
-        connectionId: ${aws_vpc_link}
-        contentHandling: "CONVERT_TO_TEXT"
-  /ragrespond:
-    post:
-      summary: Embed API
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ragrespond'
-      responses:
-        '200':
-          description: OK
-      x-amazon-apigateway-integration:
-        uri: "http://${ecs_nlb}/ragrespond"
-        httpMethod: "POST"
-        type: "HTTP_PROXY"
-        passthroughBehavior: "WHEN_NO_MATCH"
-        connectionType: "VPC_LINK"
-        connectionId: ${aws_vpc_link}
-        contentHandling: "CONVERT_TO_TEXT"
-  /embed_test:
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/manifest.json"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
+  /favicon.ico:
     get:
-      summary: Ping API
       responses:
-        '200':
-          description: OK
+        "200":
+          description: "200 response"
+          headers:
+            Content-Type:
+              schema:
+                type: "string"
+          content:
+            image/x-icon:
+              schema:
+                $ref: "#/components/schemas/Empty"
       x-amazon-apigateway-integration:
-        uri: "http://${ecs_nlb}/embed_test"
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
         httpMethod: "GET"
-        type: "HTTP_PROXY"
-        passthroughBehavior: "WHEN_NO_MATCH"
-        connectionType: "VPC_LINK"
-        connectionId: ${aws_vpc_link} # Reference the VPC link
-        contentHandling: "CONVERT_TO_TEXT"
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/favicon.ico"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Content-Type: "integration.response.header.Content-Type"
+            contentHandling: "CONVERT_TO_BINARY"
+        passthroughBehavior: "when_no_templates"
+        type: "aws"
+  /logo192.png:
+    get:
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            image/png:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/logo192.png"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
+  /static/js/{object}:
+    get:
+      parameters:
+      - name: "object"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/static/js/{object}"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.path.object: "method.request.path.object"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
+  /static/media/{object}:
+    get:
+      parameters:
+      - name: "object"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/static/media/{object}"
+        responses:
+          default:
+            statusCode: "200"
+            contentHandling: "CONVERT_TO_BINARY"
+        requestParameters:
+          integration.request.path.object: "method.request.path.object"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
 components:
-  securitySchemes:
-    api_key:
-      type: apiKey
-      name: x-api-key
-      in: header
   schemas:
-    respond:
-      type: object
-      required:
-        - prompt
-      properties:
-        prompt:
-          type: string
-          description: ""
-    ragrespond:
-      type: object
-      required:
-        - prompt
-        - session_id
-        - model_name
-      properties:
-        prompt:
-          type: object
-          description: ""
-        session_id:
-          type: string
-          description: ""
-        model_name:
-          type: string
-          description: ""
-
-
-
-
-
-
-
-
-
-
-/
-OPTIONS
-GET
-
-/static
-
-/js
-
-/{object}
-GET
-
-/media
-
-/{object}
-GET
-
-/logo192.png
-GET
-
-/favicon.ico
-GET
-
-/manifest.json
-GET
+    Empty:
+      title: "Empty Schema"
+      type: "object"
+x-amazon-apigateway-gateway-responses:
+  DEFAULT_4XX:
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  DEFAULT_5XX:
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+x-amazon-apigateway-binary-media-types:
+- "application/octen-stream"
+- "image/x-icon"
+- "image/png"
