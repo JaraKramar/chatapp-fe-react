@@ -40,10 +40,21 @@ const slice = createSlice({
             
         },
         AddMessageToSession: (state, action) => {
-            const { sessionId, message } = action.payload;
+            const { model, sessionId, message } = action.payload;
             const session = state.chatSessions.find(session => session.session_id === sessionId);
+            
             if (session) {
-                session.messages.push(message);
+                if (session.model_name === 'haiku a sonnet') {
+                    if (model !== 'haiku a sonnet') {
+                        session[model].messages.push(message);
+                    } else {
+                        session.haiku.messages.push(message);
+                        session.sonnet.messages.push(message);
+                    }
+                } else {
+                    // For other models, push to the general messages array
+                    session[model].messages.push(message);
+                }
             }
         },
         SetActiveSession: (state, action) => {

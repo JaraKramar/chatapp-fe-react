@@ -19,14 +19,45 @@ const Chats = () => {
   const chatSessions = useSelector((state) => state.app.chatSessions || []); // Ensure it defaults to an empty array
   const activeSessionId = useSelector((state) => state.app.activeSessionId); // Get the current active session
 
-  console.log(model)
+  // console.log(model)
   const handleNewChat = () => {
-    const newSession = {
-      session_id: generateSessionId(),
-      model_name: model,
-      messages: []
-    };
-    dispatch(AddChatSession(newSession));
+    // Generate a single chat_session value
+    const chat_session = generateSessionId();
+  
+    // Check if model is "haiku a sonnet"
+    if (model === "haiku a sonnet") {
+      // Create two sessions with different session_id values but the same chat_session
+      const newSession = {
+        session_id: chat_session, // Same chat_session
+        model_name: model, // Second model variant
+        haiku: {
+          chat_session: generateSessionId(),
+          model_name: 'haiku',
+          messages: []
+        },
+        sonnet: {
+          chat_session: generateSessionId(),
+          model_name: 'sonnet',
+          messages: []
+        }
+      };
+  
+      // Dispatch both sessions
+      dispatch(AddChatSession(newSession));
+    } else {
+      // For all other models, create a single session
+      const newSession = {
+        session_id: chat_session, // Single chat_session value
+        model_name: model, // Current model value
+        [model]: {
+          chat_session: generateSessionId(),
+          model_name: model,
+          messages: []
+        }
+      };
+  
+      dispatch(AddChatSession(newSession));
+    }
   };
 
   const handleChatClick = (session_id) => {

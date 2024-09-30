@@ -16,6 +16,14 @@ module "api_gateway_frontend" {
     aws_role = "APIGatewayS3ProxyPolicy"
     aws_s3_bucket = module.s3_bucket_frontend.bucket_name
   }
+
+  binary_media_types = [
+    "application/pdf",
+    "multipart/form-data",
+    "application/octet-stream",
+    "image/x-icon",
+    "image/png"
+  ]
   disable_execute_api_endpoint = false
   # vpce_endpoint_ids = [data.aws_vpc_endpoint.selected.id]
   vpce_endpoint_ids = []
@@ -40,6 +48,14 @@ module "api_gateway_frontend_private" {
     aws_role = "APIGatewayS3ProxyPolicy"
     aws_s3_bucket = module.s3_bucket_frontend.bucket_name
   }
+
+  binary_media_types = [
+    "application/pdf",
+    "multipart/form-data",
+    "application/octet-stream",
+    "image/x-icon",
+    "image/png"
+  ]
   disable_execute_api_endpoint = false
   vpce_endpoint_ids = [aws_vpc_endpoint.vpc_endpoint.id]
 }

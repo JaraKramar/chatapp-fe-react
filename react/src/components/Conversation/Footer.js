@@ -7,38 +7,34 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { AddMessageToSession } from '../../redux/slices/app';
 import { useDispatch } from 'react-redux';
-
+import axios from 'axios'
 const StyledInput = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-input": {
     paddingTop: '12px',
     paddingBottom: '12px',
-  }  
+  }
 }));
-
 // const Actions = [
 //   {
-//     color:'#0172e4',
+//     color:'#0172E4',
 //     icon: <Camera size={24}/>,
 //     y:102,
 //     title:'Image'
 //   },
 //   {
-//     color:'#0159b2',
+//     color:'#0159B2',
 //     icon: <File size={24}/>,
 //     y:172,
 //     title:'Document'
 //   },
 // ];
-
 const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) => {
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey && inputValue.trim()) { // Only send message if Enter is pressed without Shift
       e.preventDefault(); // Prevent newline in the TextField
       onSendMessage(inputValue);
     }
   };
-
 //   const StyledInput = styled(TextField)(({ theme }) => ({
 //     "& .MuiInputBase-input": {
 //         paddingTop: '12px',
@@ -49,8 +45,6 @@ const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) 
 //         borderRadius: '12px', // Make the input itself rounded
 //     },
 // }));
-
-
   return (
     <StyledInput
       fullWidth
@@ -90,32 +84,77 @@ const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) 
     />
   );
 };
-
-
-const Footer = ({ activeSessionId }) => {
+const Footer = ({ activeSessionId, model, messages }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [openPicker, setOpenPicker] = useState(false);
   const [inputValue, setInputValue] = useState(''); // State for the input value
 
-  const sendMessage = (content) => {
-    if (content.trim() && activeSessionId) { // Only send if content is not empty
+  const sendMessage = async (content) => {
+    if (content.trim() && activeSessionId) {
+      // Add user message to the session
       dispatch(AddMessageToSession({
+        model: model,
         sessionId: activeSessionId,
         message: { role: "user", content: content }
       }));
-      setInputValue('');
-    if (content.trim() && activeSessionId) { // Only send if content is not empty
-        dispatch(AddMessageToSession({
-          sessionId: activeSessionId,
-          message: { role: "assistant", content: content }
-        }));
-        setInputValue(''); // Clear input after sending
-      } // Clear input after sending
+      setInputValue(''); // Clear input after sending
+      try {
+        if (model === "haiku a sonnet") {
+          // If the model is "haiku a sonnet", make two requests simultaneously
+          const [response1, response2] = await Promise.all([
+            axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+              prompt: [...messages.haiku, { role: "user", content: content }].slice(-11),
+              session_id: activeSessionId,
+              model_name: 'haiku' // First model
+            }),
+            axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+              prompt: [...messages.sonnet, { role: "user", content: content }].slice(-11),
+              session_id: activeSessionId,
+              model_name: 'sonnet' // Second model
+            })
+          ]);
+          // Handle responses from both models
+          // const assistantMessage1 = { role: "assistant", content: "hello from haiku" };
+          // const assistantMessage2 = { role: "assistant", content: "hello from sonnet" };
+
+          const assistantMessage1 = response1.data;
+          const assistantMessage2 = response2.data;
+          // Add both assistant messages to the session
+          dispatch(AddMessageToSession({
+            model: 'haiku',
+            sessionId: activeSessionId,
+            message: assistantMessage1 // Response from the first model
+          }));
+          dispatch(AddMessageToSession({
+            model: 'sonnet',
+            sessionId: activeSessionId,
+            message: assistantMessage2 // Response from the second model
+          }));
+        } else {
+          // Normal flow: single request to the model
+          const response = await axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+            prompt: [...messages[model], { role: "user", content: content }].slice(-11),
+            session_id: activeSessionId,
+            model_name: model
+          });
+          // Assuming response contains the assistant's reply in the format { role: "assistant", content: "..." }
+          const assistantMessage = response.data;
+          // Add assistant message to the session
+          // const assistantMessage = { role: "assistant", content: "hello from stano" };
+
+          dispatch(AddMessageToSession({
+            model: model,
+            sessionId: activeSessionId,
+            message: assistantMessage // The response from the API
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch assistant message:', error);
+        // Handle error here, e.g., dispatch an error message to the chat
+      }
     }
   };
-
-
   return (
     <Box p={2} sx={{ width: '100%', backgroundColor: theme.palette.mode === 'light' ? '#F8FAFF' : theme.palette.background.paper, boxShadow: '0px 0px 2px rgba(0,0,0,0.25)' }}>
       <Stack direction='row' alignItems={'center'} spacing={3}>
@@ -131,7 +170,6 @@ const Footer = ({ activeSessionId }) => {
             onSendMessage={sendMessage} // Pass sendMessage function to ChatInput
           />
         </Stack>
-
         <Box sx={{ height: 48, width: 48, backgroundColor: theme.palette.primary.main, borderRadius: 1.5 }}>
           <Stack sx={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
             <IconButton onClick={() => sendMessage(inputValue)}> {/* Send inputValue */}
@@ -143,5 +181,4 @@ const Footer = ({ activeSessionId }) => {
     </Box>
   );
 };
-
 export default Footer;

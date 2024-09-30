@@ -107,7 +107,7 @@ const MediaMsg = ({el,menu}) => {
   )
 }
 
-const TextMsgUser = ({el,menu}) => {
+const TextMsgUser = ({el, menu}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={'end'}>
@@ -123,6 +123,7 @@ const TextMsgUser = ({el,menu}) => {
                     sx={{
                         wordBreak: 'break-word', // Breaks long words into multiple lines
                         overflowWrap: 'break-word', // Ensures proper wrapping in older browsers
+                        whiteSpace: 'pre-wrap'
                     }}
                 >
                     {el.content}
@@ -134,7 +135,7 @@ const TextMsgUser = ({el,menu}) => {
 }
 
 
-const TextMsgAssistant = ({ el, menu }) => {
+const TextMsgAssistant = ({ el, menu}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent='start'>
@@ -150,6 +151,7 @@ const TextMsgAssistant = ({ el, menu }) => {
                     sx={{
                         wordBreak: 'break-word', // Breaks long words into multiple lines
                         overflowWrap: 'break-word', // Ensures proper wrapping in older browsers
+                        whiteSpace: 'pre-wrap'
                     }}
                 >
                     {el.content}

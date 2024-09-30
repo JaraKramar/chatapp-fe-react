@@ -7,16 +7,16 @@ const Message = ({key, menu, messages}) => {
   return (
     <Box p={3}>
         <Stack spacing={3} >
-            {messages.map((el)=>{
+            {messages.map((el, index)=>{
                 switch (el.role) {
                     case 'divider':
                       return <TimeLine el={el}/>
                         
                     case 'assistant':
-                      return <TextMsgAssistant el={el} menu={menu}/>
+                      return <TextMsgAssistant key={index} el={el} menu={menu}/>
 
                     case "user":
-                        return <TextMsgUser el={el} menu={menu}/>
+                        return <TextMsgUser key={index} el={el} menu={menu}/>
 
                         // switch (el.subtype) {
                         //     case 'img':

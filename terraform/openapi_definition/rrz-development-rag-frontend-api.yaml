@@ -19,9 +19,47 @@ paths:
         responses:
           default:
             statusCode: "200"
-            contentHandling: "CONVERT_TO_BINARY"
+            # contentHandling: "CONVERT_TO_BINARY"
         passthroughBehavior: "when_no_match"
         type: "aws"
+  /app:
+    get:
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::${aws_account_num}:role/${aws_role}"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:${aws_region}:s3:path/${aws_s3_bucket}/index.html"
+        responses:
+          default:
+            statusCode: "200"
+            # contentHandling: "CONVERT_TO_BINARY"
+        passthroughBehavior: "when_no_match"
+        type: "aws"
+  /backend:
+    post:
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        type: "aws"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:891377142494:function:test_api/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
   /manifest.json:
     get:
       responses:
