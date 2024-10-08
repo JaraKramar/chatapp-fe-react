@@ -41,8 +41,8 @@ const model_options = [
   },
   {
     id: 2,
-    label: "haiku a sonnet",
-    value: 'haiku a sonnet'
+    label: "haiku and sonnet",
+    value: 'haiku and sonnet'
   },
 ];
 

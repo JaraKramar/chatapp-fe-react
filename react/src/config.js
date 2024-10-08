@@ -44,3 +44,11 @@ export const defaultLang = allLangs[0]; // English
 
 // DEFAULT ROOT PATH
 export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
+
+// directly api domain: https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/
+export const api_domain = "mykaterag.dev3.rrz.aws.infra003.com"
+// export const api_domain = '7o9688j7kk.execute-api.eu-central-1.amazonaws.com/dev'
+export const client_id = '4tehjk3k27fqu8tve52pdb10ib';
+export const congnito_domain = 'rrz-dev-testing.auth.eu-central-1.amazoncognito.com';
+export const JWKSDomain = 'cognito-idp.eu-central-1:.amazonaws.com';
+export const userPoolId = 'eu-central-1_ghd5oT6yK';

@@ -4,8 +4,9 @@ import { useTheme } from "@mui/material/styles";
 import { Gear, SignOut } from "phosphor-react"; // Import SignOut icon
 import { Nav_Buttons } from '../../data';
 import useSettings from '../../hooks/useSettings';
-// import Logo from '../../assets/Images/logo.ico';
+import { useDispatch } from 'react-redux';
 import Logo from '../../assets/Images/csob_logo.png';
+import { SetSignoutStatus } from '../../redux/slices/app'
 
 import { useNavigate } from 'react-router-dom';
 
@@ -25,24 +26,16 @@ const getPath = (index) => {
 };
 
 const SideBar = () => {
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const open = Boolean(anchorEl);
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
 
+  const dispatch = useDispatch()
   const theme = useTheme();
   const navigate = useNavigate();
   const [selected, setSelected] = useState(0);
   const { onToggleMode } = useSettings();
 
   const handleSignOut = () => {
-    // Add your sign-out logic here
     console.log("Sign out");
-    navigate('/auth/login'); // Redirect to login page after sign out
+    dispatch(SetSignoutStatus(true));
   };
 
   return (

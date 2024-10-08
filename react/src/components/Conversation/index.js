@@ -25,7 +25,7 @@ const Conversation = ({model, activeSessionId, messages}) => {
           <Header model={model} />
         </Box>
         {/* Conditionally render either one message or two side by side */}
-        {model === "haiku a sonnet" ? (
+        {model === "haiku and sonnet" ? (
           <Box
             sx={{
               display: 'flex',

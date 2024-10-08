@@ -10,20 +10,20 @@ module "s3_bucket_frontend_main_kms" {
 }
 
 module "s3_bucket_frontend" {
-    source = "./modules/aws-tf-module-s3"
+  source = "./modules/aws-tf-module-s3"
 
-    name = var.project_name
-    pillar = var.pillar
-    subsystem = var.subsystem
-    kms_key_alias = module.s3_bucket_frontend_main_kms.aliases[0]
+  name          = var.project_name
+  pillar        = var.pillar
+  subsystem     = var.subsystem
+  kms_key_alias = module.s3_bucket_frontend_main_kms.aliases[0]
 
 }
 
 resource "aws_s3_object" "s3_bucket_frontend_object" {
-    for_each = {for file in local.react_files : file => file}
+  for_each = { for file in local.react_files : file => file }
 
-    bucket = module.s3_bucket_frontend.bucket_name
-    key = each.value
-    source = "${var.react_files}/${each.value}"
-    etag = filemd5("${var.react_files}/${each.value}")
+  bucket = module.s3_bucket_frontend.bucket_name
+  key    = each.value
+  source = "${var.react_files}/${each.value}"
+  etag   = filemd5("${var.react_files}/${each.value}")
 }

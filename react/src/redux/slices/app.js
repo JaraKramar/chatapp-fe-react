@@ -9,6 +9,8 @@ const initialState = {
     model: "haiku", // Add the model variable to the state
     chatSessions: [], // Initialize chatSessions as an empty array
     activeSessionId: null,
+    signoutStatus: false,
+    logged_user: null
 };
 
 // Create slice
@@ -44,8 +46,8 @@ const slice = createSlice({
             const session = state.chatSessions.find(session => session.session_id === sessionId);
             
             if (session) {
-                if (session.model_name === 'haiku a sonnet') {
-                    if (model !== 'haiku a sonnet') {
+                if (session.model_name === 'haiku and sonnet') {
+                    if (model !== 'haiku and sonnet') {
                         session[model].messages.push(message);
                     } else {
                         session.haiku.messages.push(message);
@@ -60,6 +62,12 @@ const slice = createSlice({
         SetActiveSession: (state, action) => {
             state.activeSessionId = action.payload;
         },
+        SetSignoutStatus(state, action) {
+            state.signoutStatus = action.payload;
+        },
+        SetLoggedUser(state, action) {
+            state.logged_user = action.payload;
+        },
     },
 });
 
@@ -67,7 +75,17 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Export actions
-export const { toggleSidebar, updateSidebarType, updateModel, AddChatSession, RemoveChatSession, SetActiveSession, AddMessageToSession } = slice.actions;
+export const { 
+    toggleSidebar, 
+    updateSidebarType, 
+    updateModel, 
+    AddChatSession, 
+    RemoveChatSession, 
+    SetActiveSession, 
+    AddMessageToSession,
+    SetSignoutStatus,
+    SetLoggedUser
+} = slice.actions;
 
 // Thunk functions - perform async operations
 export function ToggleSidebar() {

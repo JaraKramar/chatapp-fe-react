@@ -1,12 +1,18 @@
-import { Suspense, lazy } from "react";// use to loading , loading screen until full page is load
-import { Navigate, useRoutes } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react"; // useEffect and useState added
+import { Navigate, useRoutes, useLocation, useNavigate } from "react-router-dom";
+import { Log } from 'oidc-client-ts';
+import { useSelector, useDispatch } from 'react-redux';
+import { SetLoggedUser } from '../redux/slices/app';
 
 // layouts
 import DashboardLayout from "../layouts/dashboard";
-
 // config
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
+import { getUser, signinRedirect, signinRedirectCallback } from "../authService"; // adjust this import based on your auth methods
+
+Log.setLogger(console);
+Log.setLevel(Log.DEBUG);
 
 const Loadable = (Component) => (props) => {
   return (
@@ -17,6 +23,27 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+
+  // const user = useSelector((state) => state.app.logged_user);
+  useEffect(() => {
+    async function fetchUser() {
+      const fetchedUser = await getUser();
+      // dispatch(SetLoggedUser(fetchedUser));
+    };
+
+    fetchUser();
+    if (location.pathname === '/callback') {
+      signinRedirectCallback(location.search).then(() => {
+        navigate('/app');
+      });
+    }
+
+  }, [location]);
+  
   return useRoutes([
     {
       path: "/",

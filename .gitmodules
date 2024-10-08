@@ -10,3 +10,6 @@
 [submodule "terraform/modules/aws-tf-module-s3"]
 	path = terraform/modules/aws-tf-module-s3
 	url = https://github.com/KBC-Group-CSOB/aws-tf-module-s3.git
+[submodule "terraform/modules/aws-tf-module-lambda"]
+	path = terraform/modules/aws-tf-module-lambda
+	url = https://github.com/KBC-Group-CSOB/aws-tf-module-lambda.git

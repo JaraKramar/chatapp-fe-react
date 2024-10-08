@@ -8,6 +8,8 @@ import Picker from '@emoji-mart/react';
 import { AddMessageToSession } from '../../redux/slices/app';
 import { useDispatch } from 'react-redux';
 import axios from 'axios'
+import {congnito_domain, client_id, api_domain, JWKSDomain} from '../../config'
+
 const StyledInput = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-input": {
     paddingTop: '12px',
@@ -89,6 +91,10 @@ const Footer = ({ activeSessionId, model, messages }) => {
   const dispatch = useDispatch();
   const [openPicker, setOpenPicker] = useState(false);
   const [inputValue, setInputValue] = useState(''); // State for the input value
+  const user_raw = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
+  const user = JSON.parse(user_raw)
+
+  const _token = user['access_token'];
 
   const sendMessage = async (content) => {
     if (content.trim() && activeSessionId) {
@@ -99,19 +105,30 @@ const Footer = ({ activeSessionId, model, messages }) => {
         message: { role: "user", content: content }
       }));
       setInputValue(''); // Clear input after sending
+      
+      const _header = {
+        Authorization: `Bearer ${_token}`,
+        'Content-Type': `application/json`
+      };
       try {
-        if (model === "haiku a sonnet") {
-          // If the model is "haiku a sonnet", make two requests simultaneously
+        if (model === "haiku and sonnet") {
+          // If the model is "haiku and sonnet", make two requests simultaneously
           const [response1, response2] = await Promise.all([
-            axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+            axios.post(`https://${api_domain}/backend`, {
               prompt: [...messages.haiku, { role: "user", content: content }].slice(-11),
               session_id: activeSessionId,
               model_name: 'haiku' // First model
+            },
+            {
+              headers: _header
             }),
-            axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+            axios.post(`https://${api_domain}/backend`, {
               prompt: [...messages.sonnet, { role: "user", content: content }].slice(-11),
               session_id: activeSessionId,
               model_name: 'sonnet' // Second model
+            },
+            {
+              headers: _header
             })
           ]);
           // Handle responses from both models
@@ -133,10 +150,14 @@ const Footer = ({ activeSessionId, model, messages }) => {
           }));
         } else {
           // Normal flow: single request to the model
-          const response = await axios.post('https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/backend', {
+          const response = await axios.post(`https://${api_domain}/backend`, 
+          {
             prompt: [...messages[model], { role: "user", content: content }].slice(-11),
             session_id: activeSessionId,
             model_name: model
+          },
+          {
+            headers: _header
           });
           // Assuming response contains the assistant's reply in the format { role: "assistant", content: "..." }
           const assistantMessage = response.data;

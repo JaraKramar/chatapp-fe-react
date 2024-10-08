@@ -3,6 +3,11 @@ variable "aws_account_fe_num" {
   default = "891377142494"
 }
 
+variable "aws_account_cicd_num" {
+  type    = string
+  default = "730335452162"
+}
+
 variable "aws_region" {
   description = "The AWS region to deploy resources in"
   type        = string
@@ -63,12 +68,12 @@ variable "ecs_task_role" {
 }
 
 variable "task_cpu" {
-  type = number
+  type    = number
   default = 4096
 }
 
 variable "task_memory" {
-  type = number
+  type    = number
   default = 8192
 }
 

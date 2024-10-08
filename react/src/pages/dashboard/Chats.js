@@ -24,8 +24,8 @@ const Chats = () => {
     // Generate a single chat_session value
     const chat_session = generateSessionId();
   
-    // Check if model is "haiku a sonnet"
-    if (model === "haiku a sonnet") {
+    // Check if model is "haiku and sonnet"
+    if (model === "haiku and sonnet") {
       // Create two sessions with different session_id values but the same chat_session
       const newSession = {
         session_id: chat_session, // Same chat_session

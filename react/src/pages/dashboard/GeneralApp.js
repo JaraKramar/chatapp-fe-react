@@ -14,12 +14,12 @@ const GeneralApp = () => {
   const chatSessions = useSelector((state) => state.app.chatSessions);
   
   const activeChat = chatSessions.find((session) => session.session_id === activeSessionId);
-  console.log(activeChat)
+  // console.log(activeChat)
   // Assuming messages are stored within each chat session
   const messages = (() => {
     if (activeChat) {
-      if (activeChat.model_name === "haiku a sonnet") {
-        // Return an object with haiku and sonnet messages if model is 'haiku a sonnet'
+      if (activeChat.model_name === "haiku and sonnet") {
+        // Return an object with haiku and sonnet messages if model is 'haiku and sonnet'
         return {
           haiku: activeChat.haiku.messages || [],   // Default to empty array if messages are undefined
           sonnet: activeChat.sonnet.messages || []    // Default to empty array if messages are undefined
