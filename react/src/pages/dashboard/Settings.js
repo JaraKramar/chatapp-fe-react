@@ -73,7 +73,27 @@ const Settings = () => {
                     onChange={handleModelChange}  // Dispatch Redux action on change
                   >
                     {model_options.map((option) => (
-                      <FormControlLabel key={option.id} value={option.value} control={<Radio />} label={option.label} />
+                      <FormControlLabel 
+                        key={option.id} 
+                        value={option.value} 
+                        control={<Radio />} 
+                        label={ 
+                          <Box> 
+                            <Typography variant="body1" sx={{fontWeight: 'bold' }}>
+                              {option.label}
+                            </Typography> 
+                            <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                              {option.desc}
+                            </Typography>
+                          </Box> 
+                          }
+                        sx={{
+                          wordBreak: 'break-word', // Breaks long words into multiple lines
+                          overflowWrap: 'break-word', // Ensures proper wrapping in older browsers
+                          whiteSpace: 'pre-wrap',
+                          marginBottom: 2
+                      }}
+                    />
                     ))}
                   </RadioGroup>
                 </FormControl>
@@ -95,6 +115,7 @@ const Settings = () => {
           {chatSessions.some(session => session.session_id === activeSessionId) ? (
             <Conversation 
               activeSessionId={activeSessionId} 
+              activeChat={activeChat}
               messages={messages} 
               model={activeChat ? activeChat.model_name : ''} 
             />

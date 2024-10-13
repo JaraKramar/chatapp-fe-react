@@ -1,33 +1,33 @@
 import styled from "@emotion/styled";
 import { Badge } from "@mui/material";
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+
+const StyledBadge = styled(Badge)(({ theme, color, animate=true }) => ({
     "& .MuiBadge-badge": {
-      backgroundColor: "#44b700",
-      color: "#44b700",
-      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-      "&::after": {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        animation: "ripple 1.2s infinite ease-in-out",
-        border: "1px solid currentColor",
-        content: '""',
-      },
+        backgroundColor: color || "#44B700", // Default to #44B700 if no color prop is provided
+        color: color || "#44B700",            // Match text color with the background
+        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        "&::after": {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            animation: animate === "true" ? "ripple 1.2s infinite ease-in-out": "none",
+            border: "1px solid currentColor",
+            content: '""',
+        },
     },
     "@keyframes ripple": {
-      "0%": {
-        transform: "scale(.8)",
-        opacity: 1,
-      },
-      "100%": {
-        transform: "scale(2.4)",
-        opacity: 0,
-      },
+        "0%": {
+            transform: "scale(.8)",
+            opacity: 1,
+        },
+        "100%": {
+            transform: "scale(2.4)",
+            opacity: 0,
+        },
     },
-  }));
-
-  export default StyledBadge
+}));
+export default StyledBadge;

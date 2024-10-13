@@ -13,6 +13,7 @@ const DashboardLayout = () => {
   const user = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
   const signoutStatus = useSelector((state) => state.app.signoutStatus);
   const isAuthenticated = user !== null; // Check if user is authenticated
+  // const isAuthenticated = true;
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const DashboardLayout = () => {
       dispatch(SetSignoutStatus(false));
       signinRedirect();
     };
-  }, [signoutStatus, isAuthenticated]);
+  }, [dispatch, signoutStatus, isAuthenticated]);
 
   userManager.events.addAccessTokenExpired(() => {
     console.log('Refresh token expired, user will be removed');

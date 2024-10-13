@@ -55,6 +55,7 @@ const GeneralApp = () => {
         {chatSessions.some(session => session.session_id === activeSessionId) ? (
           <Conversation 
             activeSessionId={activeSessionId} 
+            activeChat={activeChat}
             messages={messages} 
             model={activeChat ? activeChat.model_name : ''} 
           />

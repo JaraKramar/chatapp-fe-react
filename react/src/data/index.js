@@ -32,17 +32,27 @@ const model_options = [
   {
     id: 0,
     label: "haiku",
-    value: 'haiku'
+    value: 'haiku',
+    desc: "(sufficiently high-quality outputs, fastest response time)"
   },
+  
+  // TODO: edit to be able to choose any two models
+  // {
+  //   id: 2,
+  //   label: "haiku and sonnet",
+  //   value: 'haiku and sonnet'
+  // },
   {
     id: 1,
-    label: "sonnet",
-    value: 'sonnet'
+    label: "sonnet3.5",
+    value: 'sonnet3.5',
+    desc: "(highest quality outputs, medium response time (currently limited to approx. 20 queries/minute))"
   },
   {
     id: 2,
-    label: "haiku and sonnet",
-    value: 'haiku and sonnet'
+    label: "sonnet",
+    value: 'sonnet',
+    desc: "(quality outputs, slowest response time)"
   },
 ];
 

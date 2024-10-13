@@ -5,7 +5,7 @@ import { PaperPlaneTilt } from 'phosphor-react';
 // import { Camera, File } from 'phosphor-react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
-import { AddMessageToSession } from '../../redux/slices/app';
+import { AddMessageToSession, SetLoadingMSGStatus, RemoveLastMessageInSession } from '../../redux/slices/app';
 import { useDispatch } from 'react-redux';
 import axios from 'axios'
 import {congnito_domain, client_id, api_domain, JWKSDomain} from '../../config'
@@ -16,20 +16,7 @@ const StyledInput = styled(TextField)(({ theme }) => ({
     paddingBottom: '12px',
   }
 }));
-// const Actions = [
-//   {
-//     color:'#0172E4',
-//     icon: <Camera size={24}/>,
-//     y:102,
-//     title:'Image'
-//   },
-//   {
-//     color:'#0159B2',
-//     icon: <File size={24}/>,
-//     y:172,
-//     title:'Document'
-//   },
-// ];
+
 const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) => {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey && inputValue.trim()) { // Only send message if Enter is pressed without Shift
@@ -37,16 +24,7 @@ const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) 
       onSendMessage(inputValue);
     }
   };
-//   const StyledInput = styled(TextField)(({ theme }) => ({
-//     "& .MuiInputBase-input": {
-//         paddingTop: '12px',
-//         paddingBottom: '12px',
-//         borderRadius: '12px', // Adjust this value as needed for roundness
-//     },
-//     "& .MuiFilledInput-root": {
-//         borderRadius: '12px', // Make the input itself rounded
-//     },
-// }));
+
   return (
     <StyledInput
       fullWidth
@@ -57,31 +35,6 @@ const ChatInput = ({ setOpenPicker, inputValue, onInputChange, onSendMessage }) 
       onKeyDown={handleKeyDown} // Listen for Enter key press using onKeyDown
       InputProps={{
         disableUnderline: true,
-        // startAdornment: (
-        //   <Stack sx={{width:'max-content'}}>
-        //     <Stack sx={{position:'relative', display: openAction ? 'inline-block' : 'none'}}>
-        //       {Actions.map((el) => (
-        //         <Tooltip key={el.title} placement='right' title={el.title}>
-        //           <Fab sx={{position:'absolute', top: -el.y, backgroundColor: el.color}}>
-        //             {el.icon}
-        //           </Fab>
-        //         </Tooltip>
-        //       ))}
-        //     </Stack>
-        //     <InputAdornment>
-        //       <IconButton onClick={() => setOpenAction((prev) => !prev)}>
-        //         <LinkSimple />
-        //       </IconButton>
-        //     </InputAdornment>
-        //   </Stack>
-        // ),
-        // endAdornment: (
-        //   <InputAdornment>
-        //     <IconButton onClick={() => setOpenPicker((prev) => !prev)}>
-        //       <Smiley />
-        //     </IconButton>
-        //   </InputAdornment>
-        // ),
       }}
     />
   );
@@ -95,6 +48,8 @@ const Footer = ({ activeSessionId, model, messages }) => {
   const user = JSON.parse(user_raw)
 
   const _token = user['access_token'];
+  // const _token = '1234567890-';
+  // const delay = ms => new Promise(res => setTimeout(res, ms));
 
   const sendMessage = async (content) => {
     if (content.trim() && activeSessionId) {
@@ -110,33 +65,45 @@ const Footer = ({ activeSessionId, model, messages }) => {
         Authorization: `Bearer ${_token}`,
         'Content-Type': `application/json`
       };
+      
+      const fetchResponse = async (_model, _content) => {
+        
+        // set message holder (shown as 3 dots)
+        dispatch(AddMessageToSession({
+          model: _model,
+          sessionId: activeSessionId,
+          message: {role: "assistant", content: "LOADING_MSG_STATUS"} // Response from the second model
+        }));
+        // await delay(5000);
+        // const response = {role: "assistant", content: 'hello from wait'}
+
+        const response = await axios.post(`https://${api_domain}/backend`, 
+          {
+            prompt: [...messages[_model], { role: "user", content: _content }].slice(-11),
+            session_id: activeSessionId,
+            model_name: _model,
+            user: user['profile']['cognito:username'],
+            email: user['profile']['email']
+          },
+          {
+            headers: _header
+          });
+
+        dispatch(RemoveLastMessageInSession({
+          model: _model,
+          sessionId: activeSessionId,
+        }));
+        return response
+      };
+
       try {
         if (model === "haiku and sonnet") {
           // If the model is "haiku and sonnet", make two requests simultaneously
-          const [response1, response2] = await Promise.all([
-            axios.post(`https://${api_domain}/backend`, {
-              prompt: [...messages.haiku, { role: "user", content: content }].slice(-11),
-              session_id: activeSessionId,
-              model_name: 'haiku' // First model
-            },
-            {
-              headers: _header
-            }),
-            axios.post(`https://${api_domain}/backend`, {
-              prompt: [...messages.sonnet, { role: "user", content: content }].slice(-11),
-              session_id: activeSessionId,
-              model_name: 'sonnet' // Second model
-            },
-            {
-              headers: _header
-            })
+          const [assistantMessage1, assistantMessage2] = await Promise.all([
+            fetchResponse("haiku", content),
+            fetchResponse("sonnet", content)
           ]);
-          // Handle responses from both models
-          // const assistantMessage1 = { role: "assistant", content: "hello from haiku" };
-          // const assistantMessage2 = { role: "assistant", content: "hello from sonnet" };
 
-          const assistantMessage1 = response1.data;
-          const assistantMessage2 = response2.data;
           // Add both assistant messages to the session
           dispatch(AddMessageToSession({
             model: 'haiku',
@@ -150,19 +117,7 @@ const Footer = ({ activeSessionId, model, messages }) => {
           }));
         } else {
           // Normal flow: single request to the model
-          const response = await axios.post(`https://${api_domain}/backend`, 
-          {
-            prompt: [...messages[model], { role: "user", content: content }].slice(-11),
-            session_id: activeSessionId,
-            model_name: model
-          },
-          {
-            headers: _header
-          });
-          // Assuming response contains the assistant's reply in the format { role: "assistant", content: "..." }
-          const assistantMessage = response.data;
-          // Add assistant message to the session
-          // const assistantMessage = { role: "assistant", content: "hello from stano" };
+          const assistantMessage = await fetchResponse(model, content)
 
           dispatch(AddMessageToSession({
             model: model,

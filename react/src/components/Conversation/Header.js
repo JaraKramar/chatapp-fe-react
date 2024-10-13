@@ -3,11 +3,11 @@ import React from 'react';
 import { useTheme } from "@mui/material/styles";
 import StyledBadge from '../StyledBadge';
 
-const Header = ({ model }) => {
+const Header = ({ model, activeChat }) => {
   const theme = useTheme();
-
   // Get the first letter of the model
   const firstLetterBig = model ? model[0].toUpperCase() + model.slice(1) : '';
+  const dotstatius = activeChat[model].dotstatus
 
   return (
     <Box p={2} sx={{ display: 'flex', alignItems: 'center', height: '70px', width: '100%', backgroundColor: theme.palette.mode === 'light' ? '#F8FAFF' : theme.palette.background.paper, boxShadow: '0px 0px 2px rgba(0,0,0,0.25)' }}>
@@ -75,6 +75,8 @@ const Header = ({ model }) => {
               horizontal: "right",
             }}
             variant="dot"
+            color={dotstatius === true ? '#44B700': "grey"}
+            animate={dotstatius === true ? 'true': "false"}
           >
             <Avatar alt={model} sx={{ color: 'black' }}>
               {model && model[0].toUpperCase()} {/* Show first letter of the model name */}
@@ -85,7 +87,7 @@ const Header = ({ model }) => {
               {firstLetterBig}
             </Typography>
             <Typography variant='caption'>
-              Online
+               {dotstatius === true ? 'Online': "Offline"}
             </Typography>
           </Stack>
         </Box>

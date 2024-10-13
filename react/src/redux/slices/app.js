@@ -6,11 +6,11 @@ const initialState = {
         open: false,
         type: "CONTACT", // can be CONTACT, STARRED, SHARED
     },
-    model: "haiku", // Add the model variable to the state
+    model: "sonnet3.5", // Add the model variable to the state
     chatSessions: [], // Initialize chatSessions as an empty array
     activeSessionId: null,
     signoutStatus: false,
-    logged_user: null
+    logged_user: null,
 };
 
 // Create slice
@@ -41,6 +41,25 @@ const slice = createSlice({
             state.chatSessions = state.chatSessions.filter(session => session.session_id !== action.payload);
             
         },
+        ChangeDotStatus:  (state, action) => {
+            const { model, sessionId, status } = action.payload;
+            const session = state.chatSessions.find(session => session.session_id === sessionId);
+
+            if (session) {
+                if (session.model_name === 'haiku and sonnet') {
+                    if (model !== 'haiku and sonnet') {
+                        session[model].dotstatus = status;
+                    } else {
+                        session.haiku.dotstatus = status;
+                        session.sonnet.dotstatus = status;
+                    }
+                } else {
+                    // For other models, push to the general messages array
+                    // console.log(session[model].messages)
+                    session[model].dotstatus = status;
+                }
+            }
+        },
         AddMessageToSession: (state, action) => {
             const { model, sessionId, message } = action.payload;
             const session = state.chatSessions.find(session => session.session_id === sessionId);
@@ -55,9 +74,29 @@ const slice = createSlice({
                     }
                 } else {
                     // For other models, push to the general messages array
+                    // console.log(session[model].messages)
                     session[model].messages.push(message);
                 }
             }
+        },
+        RemoveLastMessageInSession: (state, action) => {
+            const { model, sessionId } = action.payload;
+            const session = state.chatSessions.find(session => session.session_id === sessionId);
+            
+
+            if (session) {
+                if (session.model_name === 'haiku and sonnet') {
+                    if (model !== 'haiku and sonnet') {
+                        session[model].messages = session[model].messages.slice(0, -1);
+                    } else {
+                        session.haiku.messages = session[model].messages.slice(0, -1);
+                        session.sonnet.messages = session[model].messages.slice(0, -1);
+                    }
+                } else {            
+                    session[model].messages = session[model].messages.slice(0, -1);
+                }
+            }
+
         },
         SetActiveSession: (state, action) => {
             state.activeSessionId = action.payload;
@@ -68,6 +107,7 @@ const slice = createSlice({
         SetLoggedUser(state, action) {
             state.logged_user = action.payload;
         },
+
     },
 });
 
@@ -83,8 +123,10 @@ export const {
     RemoveChatSession, 
     SetActiveSession, 
     AddMessageToSession,
+    RemoveLastMessageInSession,
     SetSignoutStatus,
-    SetLoggedUser
+    SetLoggedUser,
+    ChangeDotStatus
 } = slice.actions;
 
 // Thunk functions - perform async operations

@@ -134,6 +134,56 @@ const TextMsgUser = ({el, menu}) => {
     )
 }
 
+const LoadingDots = () => {
+    const theme = useTheme();
+    return (
+        <Box display="flex" alignItems="center">
+            <Box
+                sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: theme.palette.primary.dark,
+                    animation: 'dot 1.5s infinite ease-in-out',
+                    margin: '0 4px',
+                }}
+            />
+            <Box
+                sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: theme.palette.primary.dark,
+                    animation: 'dot 1.5s infinite ease-in-out 0.3s',
+                    margin: '0 4px',
+                }}
+            />
+            <Box
+                sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: theme.palette.primary.dark,
+                    animation: 'dot 1.5s infinite ease-in-out 0.6s',
+                    margin: '0 4px',
+                }}
+            />
+            <style>
+                {`
+                    @keyframes dot {
+                        0%, 20%, 100% {
+                            transform: scale(1);
+                        }
+                        50% {
+                            transform: scale(1.5);
+                        }
+                    }
+                `}
+            </style>
+        </Box>
+    );
+}
+
 
 const TextMsgAssistant = ({ el, menu}) => {
     const theme = useTheme();
@@ -215,4 +265,4 @@ const MessageOptions = () => {
 
 
 // should not be default export, because we need to export multiple things
-export { TimeLine, TextMsgAssistant, TextMsgUser, MediaMsg, ReplyMsg, LinkMsg, DocMsg }
+export { TimeLine, TextMsgAssistant, TextMsgUser, MediaMsg, ReplyMsg, LinkMsg, DocMsg, LoadingDots }

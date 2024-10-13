@@ -1,15 +1,14 @@
 import { Suspense, lazy, useEffect } from "react"; // useEffect and useState added
 import { Navigate, useRoutes, useLocation, useNavigate } from "react-router-dom";
 import { Log } from 'oidc-client-ts';
-import { useSelector, useDispatch } from 'react-redux';
-import { SetLoggedUser } from '../redux/slices/app';
+import { useDispatch } from 'react-redux';
 
 // layouts
 import DashboardLayout from "../layouts/dashboard";
 // config
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
-import { getUser, signinRedirect, signinRedirectCallback } from "../authService"; // adjust this import based on your auth methods
+import { getUser, signinRedirectCallback } from "../authService"; // adjust this import based on your auth methods
 
 Log.setLogger(console);
 Log.setLevel(Log.DEBUG);
@@ -26,7 +25,6 @@ export default function Router() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
 
   // const user = useSelector((state) => state.app.logged_user);
   useEffect(() => {
@@ -40,6 +38,11 @@ export default function Router() {
       signinRedirectCallback(location.search).then(() => {
         navigate('/app');
       });
+    }
+
+    // connection between router and aws api- "settings" (page refresh) 
+    if (location.pathname === '/settings') {
+      navigate('/settings');
     }
 
   }, [location]);

@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { AddChatSession, SetActiveSession, RemoveChatSession } from '../../redux/slices/app';
+import { AddChatSession, SetActiveSession, RemoveChatSession, ChangeDotStatus } from '../../redux/slices/app';
 import ChatElement from '../../components/ChatElement';
+import axios from 'axios'
+import { api_domain, congnito_domain, client_id } from '../../config'
 
 const generateSessionId = () => {
   return crypto.randomUUID();
@@ -19,6 +21,16 @@ const Chats = () => {
   const chatSessions = useSelector((state) => state.app.chatSessions || []); // Ensure it defaults to an empty array
   const activeSessionId = useSelector((state) => state.app.activeSessionId); // Get the current active session
 
+  const user_raw = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
+  const user = JSON.parse(user_raw)
+
+  const _token = user['access_token'];
+  // const _token = '1234567890-';
+  const _header = {
+    Authorization: `Bearer ${_token}`,
+    'Content-Type': `application/json`
+  };
+
   // console.log(model)
   const handleNewChat = () => {
     // Generate a single chat_session value
@@ -33,12 +45,14 @@ const Chats = () => {
         haiku: {
           chat_session: generateSessionId(),
           model_name: 'haiku',
-          messages: []
+          messages: [],
+          dotstatus: false
         },
         sonnet: {
           chat_session: generateSessionId(),
           model_name: 'sonnet',
-          messages: []
+          messages: [],
+          dotstatus: false
         }
       };
   
@@ -52,11 +66,42 @@ const Chats = () => {
         [model]: {
           chat_session: generateSessionId(),
           model_name: model,
-          messages: []
+          messages: [],
+          dotstatus: false
         }
       };
   
       dispatch(AddChatSession(newSession));
+
+      handleChatClick(newSession.session_id);
+
+      fetchPingRAG(model, newSession.session_id);
+
+    }
+  };
+
+  const fetchPingRAG = async (_model, sessionId) => {
+
+    const response = await axios.get(`https://${api_domain}/pingrag`, 
+      {
+        model_name: _model,
+      },
+      {
+        headers: _header
+      });
+
+    if (response.data.status === 200) {
+      dispatch(ChangeDotStatus({
+        model: _model,
+        sessionId: sessionId,
+        status: true
+      }))
+    } else {
+      dispatch(ChangeDotStatus({
+        model: _model,
+        sessionId: sessionId,
+        status: false
+      }))
     }
   };
 

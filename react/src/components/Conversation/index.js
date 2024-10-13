@@ -4,7 +4,9 @@ import { useTheme } from "@mui/material/styles";
 import Header from './Header';
 import Footer from './Footer';
 import Message from './Message';
-const Conversation = ({model, activeSessionId, messages}) => {
+
+
+const Conversation = ({model, activeSessionId, activeChat, messages}) => {
     const theme = useTheme();
     const scrollContainerRef = useRef(null); // Create a ref for the scroll container
     const scrollContainerRef2 = useRef(null); // Create a ref for the scroll container
@@ -22,7 +24,7 @@ const Conversation = ({model, activeSessionId, messages}) => {
       <Stack height={'100vh'} width={'auto'}>
         {/* Chat header */}
         <Box sx={{ flexShrink: 0 }}>
-          <Header model={model} />
+          <Header model={model} activeChat={activeChat} />
         </Box>
         {/* Conditionally render either one message or two side by side */}
         {model === "haiku and sonnet" ? (
