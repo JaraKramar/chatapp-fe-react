@@ -3,17 +3,21 @@ import React from 'react';
 import { useTheme } from "@mui/material/styles";
 import StyledBadge from '../StyledBadge';
 
-const Header = ({ model, activeChat }) => {
+const Header = ({ models, activeChat }) => {
   const theme = useTheme();
-  // Get the first letter of the model
-  const firstLetterBig = model ? model[0].toUpperCase() + model.slice(1) : '';
-  const dotstatius = activeChat[model].dotstatus
-
+  // Get the first letter of the models
+  let firstLetterBig = [];
+  let dotStatus = [];
+  for (const key in models) {
+    firstLetterBig[key] = models[key][0].toUpperCase() + models[key].slice(1)
+    dotStatus[key] = activeChat[models[key]].dotstatus
+  }
+  
   return (
     <Box p={2} sx={{ display: 'flex', alignItems: 'center', height: '70px', width: '100%', backgroundColor: theme.palette.mode === 'light' ? '#F8FAFF' : theme.palette.background.paper, boxShadow: '0px 0px 2px rgba(0,0,0,0.25)' }}>
       
-      {/* Check model for rendering headers */}
-      {model === "haiku and sonnet" ? (
+      {/* Check models for rendering headers */}
+      {models.length >= 2 ? (
         <>
           {/* First header for Haiku */}
           <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
@@ -24,14 +28,18 @@ const Header = ({ model, activeChat }) => {
                 horizontal: "right",
               }}
               variant="dot"
+              color={dotStatus[0] === true ? '#44B700': "grey"}
+              animate={dotStatus[0] === true ? 'true': "false"}
             >
-              <Avatar alt="Haiku" sx={{ color: 'black' }}>
-                H
+              <Avatar alt={models[0]} sx={{ color: 'black' }}>
+                {firstLetterBig[0][0]}
               </Avatar>
             </StyledBadge>
             <Stack spacing={0.2} sx={{ marginLeft: 1 }}>
-              <Typography variant='subtitle2'>Haiku</Typography>
-              <Typography variant='caption'>Online</Typography>
+              <Typography variant='subtitle2'>{firstLetterBig[0]}</Typography>
+              <Typography variant='caption'>
+               {dotStatus[0] === true ? 'Online': "Offline"}
+            </Typography>
             </Stack>
           </Box>
 
@@ -55,14 +63,18 @@ const Header = ({ model, activeChat }) => {
                 horizontal: "right",
               }}
               variant="dot"
+              color={dotStatus[1] === true ? '#44B700': "grey"}
+              animate={dotStatus[1] === true ? 'true': "false"}
             >
-              <Avatar alt="Sonnet" sx={{ color: 'black' }}>
-                S
+              <Avatar alt={models[1]} sx={{ color: 'black' }}>
+                {firstLetterBig[1][0]}
               </Avatar>
             </StyledBadge>
             <Stack spacing={0.2} sx={{ marginLeft: 1 }}>
-              <Typography variant='subtitle2'>Sonnet</Typography>
-              <Typography variant='caption'>Online</Typography>
+              <Typography variant='subtitle2'>{firstLetterBig[1]}</Typography>
+              <Typography variant='caption'>
+               {dotStatus[1] === true ? 'Online': "Offline"}
+            </Typography>
             </Stack>
           </Box>
         </>
@@ -75,19 +87,19 @@ const Header = ({ model, activeChat }) => {
               horizontal: "right",
             }}
             variant="dot"
-            color={dotstatius === true ? '#44B700': "grey"}
-            animate={dotstatius === true ? 'true': "false"}
+            color={dotStatus[0] === true ? '#44B700': "grey"}
+            animate={dotStatus[0] === true ? 'true': "false"}
           >
-            <Avatar alt={model} sx={{ color: 'black' }}>
-              {model && model[0].toUpperCase()} {/* Show first letter of the model name */}
+            <Avatar alt={models[0]} sx={{ color: 'black' }}>
+              {firstLetterBig[0][0]} {/* Show first letter of the models name */}
             </Avatar>
           </StyledBadge>
           <Stack spacing={0.2} sx={{ marginLeft: 1 }}>
             <Typography variant='subtitle2'>
-              {firstLetterBig}
+              {firstLetterBig[0]}
             </Typography>
             <Typography variant='caption'>
-               {dotstatius === true ? 'Online': "Offline"}
+               {dotStatus[0] === true ? 'Online': "Offline"}
             </Typography>
           </Stack>
         </Box>

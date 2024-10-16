@@ -3,14 +3,13 @@ import { Stack } from '@mui/material';
 import SideBar from "./SideBar";
 import { useSelector, useDispatch } from 'react-redux';
 import { SetSignoutStatus } from '../../redux/slices/app';
-import { signinRedirect, signoutRedirect, removeUser, userManager } from "../../authService";
-import {congnito_domain, client_id} from '../../config'
+import { signinRedirect, signoutRedirect, removeUser, userManager } from "../../authentication/authService";
 import { useEffect } from "react"; // useEffect and useState added
+import {user} from '../../services/auth'
 
 
 const DashboardLayout = () => {
 
-  const user = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
   const signoutStatus = useSelector((state) => state.app.signoutStatus);
   const isAuthenticated = user !== null; // Check if user is authenticated
   // const isAuthenticated = true;
@@ -35,21 +34,23 @@ const DashboardLayout = () => {
     dispatch(SetSignoutStatus(true));
   })
 
-  // try {
-  //   console.log('User:', user);
-  //   console.log('User:', user.profile.email);
-  //   console.log('Access token:', user.access_token)
-  // } catch (error) {
-  //   console.error(error);
-  // }
-
   if (signoutStatus) {
-    return <>Not authorized user, please go back to login</>;
-  }
+    return ( 
+      <div > 
+        <h1>403 Forbidden</h1> 
+        <p>Not authorized user, please go back to login.</p> 
+      </div> 
+    );
+  };
 
   if (!isAuthenticated) {
-    return <>Not authorized user, please go back to login</>;
-  } 
+    return ( 
+      <div > 
+        <h1>403 Forbidden</h1> 
+        <p>Not authorized user, please go back to login.</p> 
+      </div> 
+    );
+  };
 
   return (
       <Stack direction='row'>

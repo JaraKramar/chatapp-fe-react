@@ -1,10 +1,34 @@
 import { Avatar, Badge, Box, Stack, Typography, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {STRING_MODEL_CONNECTOR} from '../config'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useState } from 'react';
 
 // Single chat element
-const ChatElement = ({ session_id, model_name, img, msg, time, online, unread, isActive, onClick, onRemove }) => {
+const ChatElement = ({ chat_id, model_name, img, msg, time, online, unread, isActive, onClick, onRemove }) => {
   const theme = useTheme();
+
+  let modelNameConnected = []
+  let modelNameConectedAvatar = []
+  for (const key in model_name) {
+    modelNameConectedAvatar[key] = model_name[key][0].toUpperCase()
+    modelNameConnected[key] = modelNameConectedAvatar[key] + model_name[key].slice(1)
+  }
+  modelNameConectedAvatar = modelNameConectedAvatar.join('|')
+  modelNameConnected = modelNameConnected.join(STRING_MODEL_CONNECTOR)
+
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = (item) => {
+    navigator.clipboard.writeText(chat_id).then(() => {
+      console.log('Copied to clipboard!');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
   
   return (
     <Box
@@ -27,15 +51,44 @@ const ChatElement = ({ session_id, model_name, img, msg, time, online, unread, i
     >
       <Stack direction="row" alignItems='center' justifyContent='space-between'>
         <Stack direction='row' spacing={2}>
-          <Avatar alt={model_name} sx={{ color: 'black' }}>
-            {model_name && model_name[0].toUpperCase()}
+          <Avatar 
+            alt={modelNameConectedAvatar} 
+            sx={{
+              color: 'black',
+            }}
+          >
+            {modelNameConectedAvatar}
           </Avatar>
           <Stack spacing={0.3}>
             <Typography variant='subtitle2'>
-              {model_name}
+              {modelNameConnected}
             </Typography>
-            <Typography variant='caption'>
-              {session_id}
+            <Typography 
+              variant='h6'
+              onClick={handleCopy}
+              style={{ 
+                cursor: 'pointer', 
+                display: 'inline-block', 
+                padding: '1px 2px', // Optional padding to make the color more visible 
+                borderRadius: '8px', // Optional: to makethe background look nicer 
+                }}
+            >
+                {!isCopied ? (
+                <ContentCopyIcon
+                  style={{
+                    fontSize: 'inherit'
+                  }}  
+                />
+                  ) : (
+                    <span style={{
+                      fontSize: 'inherit',
+                      color: isCopied ? theme.palette.primary.contrastText : 'transparent', // This line iscorrect 
+                    }}  
+                    >
+                    chat id copied
+                    </span>
+                  )
+                }
             </Typography>
           </Stack>
         </Stack>

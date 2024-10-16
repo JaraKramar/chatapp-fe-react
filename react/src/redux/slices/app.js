@@ -6,7 +6,7 @@ const initialState = {
         open: false,
         type: "CONTACT", // can be CONTACT, STARRED, SHARED
     },
-    model: "sonnet3.5", // Add the model variable to the state
+    model: ["sonnet3.5"], // Add the model variable to the state
     chatSessions: [], // Initialize chatSessions as an empty array
     activeSessionId: null,
     signoutStatus: false,
@@ -38,12 +38,12 @@ const slice = createSlice({
             state.chatSessions.push(action.payload);
         },
         RemoveChatSession: (state, action) => {
-            state.chatSessions = state.chatSessions.filter(session => session.session_id !== action.payload);
+            state.chatSessions = state.chatSessions.filter(session => session.chat_id !== action.payload);
             
         },
         ChangeDotStatus:  (state, action) => {
             const { model, sessionId, status } = action.payload;
-            const session = state.chatSessions.find(session => session.session_id === sessionId);
+            const session = state.chatSessions.find(session => session.chat_id === sessionId);
 
             if (session) {
                 if (session.model_name === 'haiku and sonnet') {
@@ -61,27 +61,29 @@ const slice = createSlice({
             }
         },
         AddMessageToSession: (state, action) => {
-            const { model, sessionId, message } = action.payload;
-            const session = state.chatSessions.find(session => session.session_id === sessionId);
-            
+            const { model, sessionId, message, references } = action.payload;
+            const session = state.chatSessions.find(session => session.chat_id === sessionId);
+
             if (session) {
-                if (session.model_name === 'haiku and sonnet') {
-                    if (model !== 'haiku and sonnet') {
+                if (session.model_name.length >= 2) {
+                    if (model.length !== 2) {
                         session[model].messages.push(message);
+                        session[model].references.push(references);
                     } else {
-                        session.haiku.messages.push(message);
-                        session.sonnet.messages.push(message);
-                    }
+                        for (const key in model) {
+                            session[model[key]].messages.push(message);
+                            session[model[key]].references.push(references);
+                        }
+                    } 
                 } else {
-                    // For other models, push to the general messages array
-                    // console.log(session[model].messages)
                     session[model].messages.push(message);
+                    session[model].references.push(references);
                 }
             }
         },
         RemoveLastMessageInSession: (state, action) => {
             const { model, sessionId } = action.payload;
-            const session = state.chatSessions.find(session => session.session_id === sessionId);
+            const session = state.chatSessions.find(session => session.chat_id === sessionId);
             
 
             if (session) {
@@ -94,6 +96,7 @@ const slice = createSlice({
                     }
                 } else {            
                     session[model].messages = session[model].messages.slice(0, -1);
+                    session[model].references = session[model].references.slice(0, -1);
                 }
             }
 

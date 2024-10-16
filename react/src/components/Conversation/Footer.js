@@ -2,13 +2,11 @@ import { Box, IconButton, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { styled, useTheme } from "@mui/material/styles";
 import { PaperPlaneTilt } from 'phosphor-react';
-// import { Camera, File } from 'phosphor-react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
-import { AddMessageToSession, SetLoadingMSGStatus, RemoveLastMessageInSession } from '../../redux/slices/app';
+import { AddMessageToSession } from '../../redux/slices/app';
 import { useDispatch } from 'react-redux';
-import axios from 'axios'
-import {congnito_domain, client_id, api_domain, JWKSDomain} from '../../config'
+import fetchRAGResponse from '../../services/api_rag';
 
 const StyledInput = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-input": {
@@ -44,91 +42,58 @@ const Footer = ({ activeSessionId, model, messages }) => {
   const dispatch = useDispatch();
   const [openPicker, setOpenPicker] = useState(false);
   const [inputValue, setInputValue] = useState(''); // State for the input value
-  const user_raw = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
-  const user = JSON.parse(user_raw)
-
-  const _token = user['access_token'];
-  // const _token = '1234567890-';
-  // const delay = ms => new Promise(res => setTimeout(res, ms));
+  
+  // console.log(messages)
 
   const sendMessage = async (content) => {
     if (content.trim() && activeSessionId) {
+      // console.log(model)
       // Add user message to the session
       dispatch(AddMessageToSession({
         model: model,
         sessionId: activeSessionId,
-        message: { role: "user", content: content }
+        message: { role: "user", content: content },
+        references: 'USER_REFERENCE'
       }));
       setInputValue(''); // Clear input after sending
-      
-      const _header = {
-        Authorization: `Bearer ${_token}`,
-        'Content-Type': `application/json`
-      };
-      
-      const fetchResponse = async (_model, _content) => {
-        
-        // set message holder (shown as 3 dots)
-        dispatch(AddMessageToSession({
-          model: _model,
-          sessionId: activeSessionId,
-          message: {role: "assistant", content: "LOADING_MSG_STATUS"} // Response from the second model
-        }));
-        // await delay(5000);
-        // const response = {role: "assistant", content: 'hello from wait'}
 
-        const response = await axios.post(`https://${api_domain}/backend`, 
-          {
-            prompt: [...messages[_model], { role: "user", content: _content }].slice(-11),
-            session_id: activeSessionId,
-            model_name: _model,
-            user: user['profile']['cognito:username'],
-            email: user['profile']['email']
-          },
-          {
-            headers: _header
-          });
-
-        dispatch(RemoveLastMessageInSession({
-          model: _model,
-          sessionId: activeSessionId,
-        }));
-        return response
-      };
-
-      try {
-        if (model === "haiku and sonnet") {
+      // try {
+        if (model.length === 2) {
           // If the model is "haiku and sonnet", make two requests simultaneously
-          const [assistantMessage1, assistantMessage2] = await Promise.all([
-            fetchResponse("haiku", content),
-            fetchResponse("sonnet", content)
+          const [{assistantMessage: assistantMessage1, formatedContext: formatedContext1}, {assistantMessage: assistantMessage2, formatedContext: formatedContext2}] = await Promise.all([
+            fetchRAGResponse(model[0], content, activeSessionId, messages[model[0]].messages, dispatch),
+            fetchRAGResponse(model[1], content, activeSessionId, messages[model[1]].messages, dispatch)
           ]);
-
+          console.log(assistantMessage1)
+          console.log(formatedContext1)
           // Add both assistant messages to the session
           dispatch(AddMessageToSession({
-            model: 'haiku',
+            model: model[0],
             sessionId: activeSessionId,
-            message: assistantMessage1 // Response from the first model
+            message: assistantMessage1, // Response from the first model
+            references: formatedContext1
           }));
           dispatch(AddMessageToSession({
-            model: 'sonnet',
+            model: model[1],
             sessionId: activeSessionId,
-            message: assistantMessage2 // Response from the second model
+            message: assistantMessage2, // Response from the second model
+            references: formatedContext2
           }));
         } else {
           // Normal flow: single request to the model
-          const assistantMessage = await fetchResponse(model, content)
+          const {assistantMessage, formatedContext} = await fetchRAGResponse(model[0], content, activeSessionId, messages[model[0]].messages, dispatch);
 
           dispatch(AddMessageToSession({
-            model: model,
+            model: model[0],
             sessionId: activeSessionId,
-            message: assistantMessage // The response from the API
+            message: assistantMessage, // The response from the API
+            references: formatedContext
           }));
         }
-      } catch (error) {
-        console.error('Failed to fetch assistant message:', error);
-        // Handle error here, e.g., dispatch an error message to the chat
-      }
+      // } catch (error) {
+      //   console.error('Failed to fetch assistant message:', error);
+      //   // Handle error here, e.g., dispatch an error message to the chat
+      // }
     }
   };
   return (

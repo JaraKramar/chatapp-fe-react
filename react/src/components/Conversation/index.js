@@ -6,28 +6,32 @@ import Footer from './Footer';
 import Message from './Message';
 
 
-const Conversation = ({model, activeSessionId, activeChat, messages}) => {
+const Conversation = ({models, activeSessionId, activeChat, messages}) => {
     const theme = useTheme();
     const scrollContainerRef = useRef(null); // Create a ref for the scroll container
     const scrollContainerRef2 = useRef(null); // Create a ref for the scroll container
+
     useEffect(() => {
       if (scrollContainerRef.current) {
           scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight; // Scroll to the bottom
       }
     }, [messages]); // Run the effect whenever messages change
+    
     useEffect(() => {
       if (scrollContainerRef2.current) {
         scrollContainerRef2.current.scrollTop = scrollContainerRef2.current.scrollHeight; // Scroll to the bottom
       }
     }, [messages]); // Run the effect whenever messages change
+
     return (
       <Stack height={'100vh'} width={'auto'}>
         {/* Chat header */}
         <Box sx={{ flexShrink: 0 }}>
-          <Header model={model} activeChat={activeChat} />
+          <Header models={models} activeChat={activeChat} />
         </Box>
         {/* Conditionally render either one message or two side by side */}
-        {model === "haiku and sonnet" ? (
+
+        {models.length === 2 ? (
           <Box
             sx={{
               display: 'flex',
@@ -57,7 +61,7 @@ const Conversation = ({model, activeSessionId, activeChat, messages}) => {
               className="scrollbar"
             >
               {/* Map through messages for the haiku message box */}
-              <Message menu={false} messages={messages.haiku} />
+              <Message menu={false} chat_data={messages[models[0]]} />
             </Box>
             {/* Vertical separator */}
             <Box
@@ -87,7 +91,7 @@ const Conversation = ({model, activeSessionId, activeChat, messages}) => {
               className="scrollbar"
             >
               {/* Map through messages for the sonnet message box */}
-              <Message menu={false} messages={messages.sonnet} />
+              <Message menu={false} chat_data={messages[models[1]]} />
             </Box>
           </Box>
         ) : (
@@ -108,12 +112,12 @@ const Conversation = ({model, activeSessionId, activeChat, messages}) => {
             }}
             className="scrollbar"
           >
-          <Message menu={false} messages={messages[model]} />
+          <Message menu={false} chat_data={messages[models[0]]} />
           </Box>
         )}
         {/* Chat footer */}
         <Box sx={{ flexShrink: 0 }}>
-          <Footer activeSessionId={activeSessionId} messages={messages} model={model}/>
+          <Footer activeSessionId={activeSessionId} messages={messages} model={models}/>
         </Box>
       </Stack>
     );

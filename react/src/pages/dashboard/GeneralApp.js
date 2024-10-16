@@ -10,29 +10,28 @@ const GeneralApp = () => {
   const {sidebar} = useSelector((store)=> store.app);// access our store inside component
   
   const activeSessionId = useSelector((state) => state.app.activeSessionId); // Get the active session
-  // // Assuming conversations are linked to session_id
+  // // Assuming conversations are linked to chat_id
   const chatSessions = useSelector((state) => state.app.chatSessions);
   
-  const activeChat = chatSessions.find((session) => session.session_id === activeSessionId);
-  // console.log(activeChat)
-  // Assuming messages are stored within each chat session
+  const activeChat = chatSessions.find((session) => session.chat_id === activeSessionId);
+  console.log(activeChat)
+
   const messages = (() => {
+    const output = {};
+
     if (activeChat) {
-      if (activeChat.model_name === "haiku and sonnet") {
-        // Return an object with haiku and sonnet messages if model is 'haiku and sonnet'
-        return {
-          haiku: activeChat.haiku.messages || [],   // Default to empty array if messages are undefined
-          sonnet: activeChat.sonnet.messages || []    // Default to empty array if messages are undefined
-        };
-      } else {
-        // Return the messages array for any other model
-        return {
-          [activeChat.model_name]: activeChat[activeChat.model_name].messages || [] // Default to empty array if messages are undefined
-        };
-      }
+      const allModels = activeChat.model_name;
+
+      for (const key in allModels) {
+        output[allModels[key]] = {
+          messages: activeChat[allModels[key]].messages || [],
+          references: activeChat[allModels[key]].references || []
+        }
+      };
+      return output;
     }
     // Return an empty object or array if activeChat is not defined
-    return {}; // You can also choose to return [] based on your needs
+    return {}; 
   })();
 
   // console.log(activeChat)
@@ -52,12 +51,12 @@ const GeneralApp = () => {
         }}
       >
         {/* Conditional rendering based on activeSessionId */}
-        {chatSessions.some(session => session.session_id === activeSessionId) ? (
+        {chatSessions.some(session => session.chat_id === activeSessionId) ? (
           <Conversation 
             activeSessionId={activeSessionId} 
             activeChat={activeChat}
             messages={messages} 
-            model={activeChat ? activeChat.model_name : ''} 
+            models={activeChat ? activeChat.model_name : ''} 
           />
         ) : (
           <Box sx={{ textAlign: 'center', padding: 4 }}>

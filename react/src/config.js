@@ -40,15 +40,24 @@ export const allLangs = [
 
 export const defaultLang = allLangs[0]; // English
 
-
-
 // DEFAULT ROOT PATH
 export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
 
-// directly api domain: https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development/
-export const api_domain = "mykaterag.dev3.rrz.aws.infra003.com"
-// export const api_domain = '7o9688j7kk.execute-api.eu-central-1.amazonaws.com/dev'
+export const LOADING_MSG_STATUS = "LOADING_MSG_STATUS";
+export const STRING_MODEL_CONNECTOR = " | "
+
+// PATH FOR APP + AUTHENTICATION SETUP 
+
+// DEV APP PATH
+// directly api domain: https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development
+export const api_domain = 'uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development';
+export const api_domain_stage = '/development';
+
+// PROD APP PATH
+// export const api_domain = "mykaterag.dev3.rrz.aws.infra003.com"
+
+// COGNITO SETUP
 export const client_id = '4tehjk3k27fqu8tve52pdb10ib';
-export const congnito_domain = 'rrz-dev-testing.auth.eu-central-1.amazoncognito.com';
+export const cognito_domain = 'rrz-dev-testing.auth.eu-central-1.amazoncognito.com';
 export const JWKSDomain = 'cognito-idp.eu-central-1:.amazonaws.com';
 export const userPoolId = 'eu-central-1_ghd5oT6yK';

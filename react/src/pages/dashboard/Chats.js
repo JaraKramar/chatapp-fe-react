@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { AddChatSession, SetActiveSession, RemoveChatSession, ChangeDotStatus } from '../../redux/slices/app';
+import { AddChatSession, SetActiveSession, RemoveChatSession } from '../../redux/slices/app';
 import ChatElement from '../../components/ChatElement';
-import axios from 'axios'
-import { api_domain, congnito_domain, client_id } from '../../config'
+import  fetchPingRAGResponse from '../../services/api_pingrag'
+
 
 const generateSessionId = () => {
   return crypto.randomUUID();
@@ -17,100 +17,49 @@ const Chats = () => {
   const dispatch = useDispatch();
   const scrollContainerRef = useRef(null); // Create a ref for the scroll container
   
-  const model = useSelector((state) => state.app.model);
+  const models = useSelector((state) => state.app.model);
+  // console.log(models)
+
   const chatSessions = useSelector((state) => state.app.chatSessions || []); // Ensure it defaults to an empty array
   const activeSessionId = useSelector((state) => state.app.activeSessionId); // Get the current active session
 
-  const user_raw = sessionStorage[`oidc.user:https://${congnito_domain}:${client_id}`] || null;
-  const user = JSON.parse(user_raw)
-
-  const _token = user['access_token'];
-  // const _token = '1234567890-';
-  const _header = {
-    Authorization: `Bearer ${_token}`,
-    'Content-Type': `application/json`
-  };
-
-  // console.log(model)
   const handleNewChat = () => {
-    // Generate a single chat_session value
-    const chat_session = generateSessionId();
-  
-    // Check if model is "haiku and sonnet"
-    if (model === "haiku and sonnet") {
-      // Create two sessions with different session_id values but the same chat_session
-      const newSession = {
-        session_id: chat_session, // Same chat_session
-        model_name: model, // Second model variant
-        haiku: {
-          chat_session: generateSessionId(),
-          model_name: 'haiku',
-          messages: [],
-          dotstatus: false
-        },
-        sonnet: {
-          chat_session: generateSessionId(),
-          model_name: 'sonnet',
-          messages: [],
-          dotstatus: false
-        }
-      };
-  
-      // Dispatch both sessions
-      dispatch(AddChatSession(newSession));
-    } else {
-      // For all other models, create a single session
-      const newSession = {
-        session_id: chat_session, // Single chat_session value
-        model_name: model, // Current model value
-        [model]: {
-          chat_session: generateSessionId(),
-          model_name: model,
-          messages: [],
-          dotstatus: false
-        }
-      };
-  
-      dispatch(AddChatSession(newSession));
-
-      handleChatClick(newSession.session_id);
-
-      fetchPingRAG(model, newSession.session_id);
-
+    // Generate a single chat_id value
+    const chat_id = generateSessionId();
+    
+    const newSession = {
+      chat_id: chat_id, // Same chat_id
+      model_name: models
     }
-  };
 
-  const fetchPingRAG = async (_model, sessionId) => {
-
-    const response = await axios.get(`https://${api_domain}/pingrag`, 
-      {
-        model_name: _model,
-      },
-      {
-        headers: _header
-      });
-
-    if (response.data.status === 200) {
-      dispatch(ChangeDotStatus({
-        model: _model,
-        sessionId: sessionId,
-        status: true
-      }))
-    } else {
-      dispatch(ChangeDotStatus({
-        model: _model,
-        sessionId: sessionId,
-        status: false
-      }))
+    for (const key in models) {
+      newSession[models[key]] = {
+        conversation_id: generateSessionId(),
+        model_name: models[key],
+        messages: [],
+        references: [],
+        dotstatus: false
+      };
     }
+    // Dispatch both sessions
+    dispatch(AddChatSession(newSession));
+
+    // new chat == active chat
+    handleChatClick(newSession.chat_id);
+
+    // checkout backend status for model
+    for (const key in models){
+      fetchPingRAGResponse(models[key], newSession.chat_id, dispatch);
+    }
+    
   };
 
-  const handleChatClick = (session_id) => {
-    dispatch(SetActiveSession(session_id)); // Set the clicked chat as the active session
+  const handleChatClick = (chat_id) => {
+    dispatch(SetActiveSession(chat_id)); // Set the clicked chat as the active session
   };
 
-  const handleRemoveChat = (session_id) => {
-    dispatch(RemoveChatSession(session_id)); // Remove the chat session
+  const handleRemoveChat = (chat_id) => {
+    dispatch(RemoveChatSession(chat_id)); // Remove the chat session
   };
 
 
@@ -122,12 +71,6 @@ const Chats = () => {
   }, [chatSessions]); // Run the effect whenever chatSessions change
 
   return (    
-    // <Box sx={{
-    //   position: "relative",
-    //   width: { xs: '30%', sm: '30%', md: '30%', lg: '15%' }, // Dynamic width based on screen size
-    //   backgroundColor: theme.palette.mode === 'light' ? "#F8FAFF" : theme.palette.background.paper,
-    //   boxShadow: '0px 0px 2px rgba(0,0,0,0.25)',
-    // }}>
     <Box sx={{
       position: "relative",
       width: 300, 
@@ -173,10 +116,10 @@ const Chats = () => {
                 .map((el) => (
                   <ChatElement
                     {...el}
-                    key={el.session_id}
-                    onClick={() => handleChatClick(el.session_id)}
-                    isActive={el.session_id === activeSessionId}
-                    onRemove={() => handleRemoveChat(el.session_id)}
+                    key={el.chat_id}
+                    onClick={() => handleChatClick(el.chat_id)}
+                    isActive={el.chat_id === activeSessionId}
+                    onRemove={() => handleRemoveChat(el.chat_id)}
                   />
                 ))
             ) : (

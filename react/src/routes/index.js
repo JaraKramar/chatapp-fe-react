@@ -6,9 +6,9 @@ import { useDispatch } from 'react-redux';
 // layouts
 import DashboardLayout from "../layouts/dashboard";
 // config
-import { DEFAULT_PATH } from "../config";
+import { DEFAULT_PATH, api_domain_stage } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
-import { getUser, signinRedirectCallback } from "../authService"; // adjust this import based on your auth methods
+import { getUser, signinRedirectCallback } from "../authentication/authService"; // adjust this import based on your auth methods
 
 Log.setLogger(console);
 Log.setLevel(Log.DEBUG);
@@ -34,16 +34,16 @@ export default function Router() {
     };
 
     fetchUser();
-    if (location.pathname === '/callback') {
+    if (location.pathname === `${api_domain_stage}/callback`) {
       signinRedirectCallback(location.search).then(() => {
-        navigate('/app');
+        navigate(`${api_domain_stage}/app`);
       });
     }
 
     // connection between router and aws api- "settings" (page refresh) 
-    if (location.pathname === '/settings') {
-      navigate('/settings');
-    }
+    // if (location.pathname === '/settings') {
+    //   navigate('/settings');
+    // }
 
   }, [location]);
   
