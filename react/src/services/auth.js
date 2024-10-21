@@ -1,12 +1,12 @@
-import { cognito_domain, client_id } from '../config';
+import { COGNITO_DOMAIN, COGNITO_CLIENT_ID } from '../config';
 
 
 // Utility function to safely get the user data from sessionStorage
 const getUserFromSession = () => {
-    const user_raw = sessionStorage.getItem(`oidc.user:https://${cognito_domain}:${client_id}`);
-    if (!user_raw) return null;
+    const userRaw = sessionStorage.getItem(`oidc.user:https://${COGNITO_DOMAIN}:${COGNITO_CLIENT_ID}`);
+    if (!userRaw) return null;
     try {
-      return JSON.parse(user_raw);
+      return JSON.parse(userRaw);
     } catch (error) {
       console.error("Failed to parse user data:", error);
       return null;

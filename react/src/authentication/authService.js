@@ -1,8 +1,7 @@
 // src/authService.js
 
-import { UserManager } from 'oidc-client-ts';
-import { authConfig } from './authConfig';
-
+import { UserManager } from "oidc-client-ts";
+import { authConfig } from "./authConfig";
 
 export const userManager = new UserManager(authConfig);
 

@@ -37,19 +37,17 @@ const Nav_Buttons = [
   {
     index: 0,
     icon: <ChatCircleDots />,
+    path: '/app'
   },
-];
-
-const Nav_Setting = [
   {
-    index: 3,
+    index: 1,
     icon: <GearSix />,
+    path: '/settings'
   },
 ];
 
 export {
   Profile_Menu,
-  Nav_Setting,
   Nav_Buttons,
   model_options
 };

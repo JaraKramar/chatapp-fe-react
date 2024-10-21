@@ -1,5 +1,5 @@
 // @mui
-import { enUS, csCZ } from '@mui/material/locale';
+import { enUS, csCZ } from "@mui/material/locale";
 
 // routes
 import { PATH_DASHBOARD } from "./routes/paths";
@@ -25,17 +25,17 @@ export const NAVBAR = {
 
 export const allLangs = [
   {
-    label: 'English',
-    value: 'en',
+    label: "English",
+    value: "en",
     systemValue: enUS,
-    icon: '/assets/icons/flags/ic_flag_en.svg',
+    icon: "/assets/icons/flags/ic_flag_en.svg",
   },
   {
-    label: 'Czech',
-    value: 'cz',
+    label: "Czech",
+    value: "cz",
     systemValue: csCZ,
-    icon: '/assets/icons/flags/ic_flag_cz.svg',
-  }
+    icon: "/assets/icons/flags/ic_flag_cz.svg",
+  },
 ];
 
 export const defaultLang = allLangs[0]; // English
@@ -44,20 +44,23 @@ export const defaultLang = allLangs[0]; // English
 export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
 
 export const LOADING_MSG_STATUS = "LOADING_MSG_STATUS";
-export const STRING_MODEL_CONNECTOR = " | "
+export const STRING_MODEL_CONNECTOR = " | ";
 
-// PATH FOR APP + AUTHENTICATION SETUP 
+// PATH FOR APP + AUTHENTICATION SETUP
 
 // DEV APP PATH
 // directly api domain: https://uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development
-export const api_domain = 'uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development';
-export const api_domain_stage = '/development';
+// export const API_DOMAIN =
+//   "uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development";
+// export const API_DOMAIN_STAGE = "/development";
+export const API_DOMAIN_STAGE = "";
 
 // PROD APP PATH
-// export const api_domain = "mykaterag.dev3.rrz.aws.infra003.com"
+export const API_DOMAIN = "mykaterag.dev3.rrz.aws.infra003.com";
 
 // COGNITO SETUP
-export const client_id = '4tehjk3k27fqu8tve52pdb10ib';
-export const cognito_domain = 'rrz-dev-testing.auth.eu-central-1.amazoncognito.com';
-export const JWKSDomain = 'cognito-idp.eu-central-1:.amazonaws.com';
-export const userPoolId = 'eu-central-1_ghd5oT6yK';
+export const COGNITO_CLIENT_ID = "4tehjk3k27fqu8tve52pdb10ib";
+export const COGNITO_DOMAIN =
+  "rrz-dev-testing.auth.eu-central-1.amazoncognito.com";
+export const JWKS_DOMAIN = "cognito-idp.eu-central-1:.amazonaws.com";
+export const USER_POOL_ID = "eu-central-1_ghd5oT6yK";

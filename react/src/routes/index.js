@@ -1,28 +1,28 @@
 import { Suspense, lazy, useEffect } from "react"; // useEffect and useState added
-import { Navigate, useRoutes, useLocation, useNavigate } from "react-router-dom";
-import { Log } from 'oidc-client-ts';
-import { useDispatch } from 'react-redux';
-
-// layouts
+import {
+  Navigate,
+  useRoutes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+// import { Log } from 'oidc-client-ts';
 import DashboardLayout from "../layouts/dashboard";
-// config
-import { DEFAULT_PATH, api_domain_stage } from "../config";
+import { DEFAULT_PATH, API_DOMAIN_STAGE } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
 import { getUser, signinRedirectCallback } from "../authentication/authService"; // adjust this import based on your auth methods
 
-Log.setLogger(console);
-Log.setLevel(Log.DEBUG);
+// Log.setLogger(console);
+// Log.setLevel(Log.DEBUG);
 
 const Loadable = (Component) => (props) => {
   return (
-    <Suspense fallback={<LoadingScreen />}> 
+    <Suspense fallback={<LoadingScreen />}>
       <Component {...props} />
     </Suspense>
   );
 };
 
 export default function Router() {
-
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -30,23 +30,16 @@ export default function Router() {
   useEffect(() => {
     async function fetchUser() {
       const fetchedUser = await getUser();
-      // dispatch(SetLoggedUser(fetchedUser));
-    };
-
-    fetchUser();
-    if (location.pathname === `${api_domain_stage}/callback`) {
-      signinRedirectCallback(location.search).then(() => {
-        navigate(`${api_domain_stage}/app`);
-      });
     }
 
-    // connection between router and aws api- "settings" (page refresh) 
-    // if (location.pathname === '/settings') {
-    //   navigate('/settings');
-    // }
+    fetchUser();
+    if (location.pathname === `${API_DOMAIN_STAGE}/callback`) {
+      signinRedirectCallback(location.search).then(() => {
+        navigate(`${API_DOMAIN_STAGE}/app`);
+      });
+    }
+  }, [location, navigate]);
 
-  }, [location]);
-  
   return useRoutes([
     {
       path: "/",
@@ -64,11 +57,9 @@ export default function Router() {
 }
 
 const GeneralApp = Loadable(
-  lazy(() => import("../pages/dashboard/GeneralApp")),
+  lazy(() => import("../pages/dashboard/GeneralApp"))
 );
 
-const Settings = Loadable(
-  lazy(() => import("../pages/dashboard/Settings")),
-);
+const Settings = Loadable(lazy(() => import("../pages/dashboard/Settings")));
 
 const Page404 = Loadable(lazy(() => import("../pages/Page404")));

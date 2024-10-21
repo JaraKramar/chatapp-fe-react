@@ -3,14 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 // Define initial state
 const initialState = {
     sidebar: {
+        selected: 0,
         open: false,
         type: "CONTACT", // can be CONTACT, STARRED, SHARED
     },
     model: ["sonnet3.5"], // Add the model variable to the state
-    chatSessions: [], // Initialize chatSessions as an empty array
-    activeSessionId: null,
+    allChatIds: [], // Initialize allChatIds as an empty array
+    activeChatId: null,
     signoutStatus: false,
-    logged_user: null,
 };
 
 // Create slice
@@ -18,54 +18,42 @@ const slice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        // Toggle sidebar
-        toggleSidebar(state) {
-            state.sidebar.open = !state.sidebar.open;
-        },
-        updateSidebarType(state, action) {
-            state.sidebar.type = action.payload.type;
+        updateSidebarSelected(state, action) {
+            state.sidebar.selected = action.payload;
         },
         // Update model
         updateModel(state, action) {
             state.model = action.payload; // Update the model variable
         },
         // Add a new chat session
-        AddChatSession(state, action) {
-            // Ensure chatSessions is defined
-            if (!state.chatSessions) {
-                state.chatSessions = []; // Fallback to an empty array if undefined
+        addChatSession(state, action) {
+            // Ensure allChatIds is defined
+            if (!state.allChatIds) {
+                state.allChatIds = []; // Fallback to an empty array if undefined
             }
-            state.chatSessions.push(action.payload);
+            state.allChatIds.push(action.payload);
         },
-        RemoveChatSession: (state, action) => {
-            state.chatSessions = state.chatSessions.filter(session => session.chat_id !== action.payload);
+        removeChatSession: (state, action) => {
+            state.allChatIds = state.allChatIds.filter(session => session.chatId !== action.payload);
             
         },
-        ChangeDotStatus:  (state, action) => {
+        changeDotStatus:  (state, action) => {
             const { model, sessionId, status } = action.payload;
-            const session = state.chatSessions.find(session => session.chat_id === sessionId);
+            const session = state.allChatIds.find(session => session.chatId === sessionId);
 
             if (session) {
-                if (session.model_name === 'haiku and sonnet') {
-                    if (model !== 'haiku and sonnet') {
-                        session[model].dotstatus = status;
-                    } else {
-                        session.haiku.dotstatus = status;
-                        session.sonnet.dotstatus = status;
-                    }
-                } else {
-                    // For other models, push to the general messages array
-                    // console.log(session[model].messages)
-                    session[model].dotstatus = status;
-                }
+                session[model].dotstatus = status;
             }
         },
-        AddMessageToSession: (state, action) => {
+        addMessageToSession: (state, action) => {
             const { model, sessionId, message, references } = action.payload;
-            const session = state.chatSessions.find(session => session.chat_id === sessionId);
+            const session = state.allChatIds.find(session => session.chatId === sessionId);
 
             if (session) {
-                if (session.model_name.length >= 2) {
+                // check if chatId is for two conversation mode
+                if (session.modelName.length >= 2) {
+                    // check if we want to put data into separate models 
+                    // or same info into both models
                     if (model.length !== 2) {
                         session[model].messages.push(message);
                         session[model].references.push(references);
@@ -81,34 +69,35 @@ const slice = createSlice({
                 }
             }
         },
-        RemoveLastMessageInSession: (state, action) => {
+        removeLastMessageInSession: (state, action) => {
             const { model, sessionId } = action.payload;
-            const session = state.chatSessions.find(session => session.chat_id === sessionId);
+            const session = state.allChatIds.find(session => session.chatId === sessionId);
             
-
-            if (session) {
-                if (session.model_name === 'haiku and sonnet') {
-                    if (model !== 'haiku and sonnet') {
-                        session[model].messages = session[model].messages.slice(0, -1);
-                    } else {
-                        session.haiku.messages = session[model].messages.slice(0, -1);
-                        session.sonnet.messages = session[model].messages.slice(0, -1);
-                    }
-                } else {            
+            if (session) {         
                     session[model].messages = session[model].messages.slice(0, -1);
                     session[model].references = session[model].references.slice(0, -1);
-                }
             }
 
+            // if (session) {
+            //     if (session.modelName === 'haiku and sonnet') {
+            //         if (model !== 'haiku and sonnet') {
+            //             session[model].messages = session[model].messages.slice(0, -1);
+            //         } else {
+            //             session.haiku.messages = session[model].messages.slice(0, -1);
+            //             session.sonnet.messages = session[model].messages.slice(0, -1);
+            //         }
+            //     } else {            
+            //         session[model].messages = session[model].messages.slice(0, -1);
+            //         session[model].references = session[model].references.slice(0, -1);
+            //     }
+            // }
+
         },
-        SetActiveSession: (state, action) => {
-            state.activeSessionId = action.payload;
+        setActiveSession: (state, action) => {
+            state.activeChatId = action.payload;
         },
-        SetSignoutStatus(state, action) {
+        setSignoutStatus(state, action) {
             state.signoutStatus = action.payload;
-        },
-        SetLoggedUser(state, action) {
-            state.logged_user = action.payload;
         },
 
     },
@@ -119,35 +108,13 @@ export default slice.reducer;
 
 // Export actions
 export const { 
-    toggleSidebar, 
-    updateSidebarType, 
+    updateSidebarSelected,
     updateModel, 
-    AddChatSession, 
-    RemoveChatSession, 
-    SetActiveSession, 
-    AddMessageToSession,
-    RemoveLastMessageInSession,
-    SetSignoutStatus,
-    SetLoggedUser,
-    ChangeDotStatus
+    addChatSession, 
+    removeChatSession, 
+    setActiveSession, 
+    addMessageToSession,
+    removeLastMessageInSession,
+    setSignoutStatus,
+    changeDotStatus
 } = slice.actions;
-
-// Thunk functions - perform async operations
-export function ToggleSidebar() {
-    return async (dispatch) => {
-        dispatch(slice.actions.toggleSidebar());
-    };
-}
-
-export function UpdateSidebarType(type) {
-    return async (dispatch) => {
-        dispatch(slice.actions.updateSidebarType({ type }));
-    };
-}
-
-// New thunk for updating the model
-export function UpdateModel(model) {
-    return async (dispatch) => {
-        dispatch(slice.actions.updateModel(model)); // Dispatch the updateModel action
-    };
-}

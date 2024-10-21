@@ -1,23 +1,15 @@
 // routes
 import Router from "./routes";
 // theme
-import ThemeProvider from './theme';
-// components
-// import ThemeSettings from './components/settings';
+import ThemeProvider from "./theme";
 
 function App() {
   return (
     <ThemeProvider>
-      {/* <ThemeSettings> */}
-        {" "}
-        <Router />{" "}
-      {/* </ThemeSettings> */}
+      {" "}
+      <Router />{" "}
     </ThemeProvider>
   );
-  // return (
-    
-  //   <Router />
-  // );
 }
 
 export default App;
