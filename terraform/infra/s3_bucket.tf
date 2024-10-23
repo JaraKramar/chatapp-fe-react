@@ -4,6 +4,7 @@ module "fe_storage" {
   pillar = var.pillar
   subsystem = var.subsystem
   kms_key_alias = data.aws_kms_alias.s3_cmk.target_key_arn
+  account_id = var.account_id
 }
 
 data "aws_kms_alias" "s3_cmk" {
