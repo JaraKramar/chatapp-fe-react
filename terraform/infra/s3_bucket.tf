@@ -3,10 +3,6 @@ module "fe_storage" {
   name   = var.fe_bucket_name
   pillar = var.pillar
   subsystem = var.subsystem
-  kms_key_alias = data.aws_kms_alias.s3_cmk.target_key_arn
+  kms_key_alias = var.s3_kms_alias
   account_id = var.account_id
-}
-
-data "aws_kms_alias" "s3_cmk" {
-  name = var.s3_kms_alias
 }
