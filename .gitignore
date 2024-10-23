@@ -7,8 +7,7 @@ personal/
 *.pem
 *.whl
 .DS_Store
-terraform/modules/
-react/build
+**/build/
 react/node_modules
 react/package-lock.json
 react_copy/
