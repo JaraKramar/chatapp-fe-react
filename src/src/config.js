@@ -53,14 +53,15 @@ export const STRING_MODEL_CONNECTOR = " | ";
 // export const API_DOMAIN =
 //   "uk1ibepo9i.execute-api.eu-central-1.amazonaws.com/development";
 // export const API_DOMAIN_STAGE = "/development";
-export const API_DOMAIN_STAGE = "";
+export const API_DOMAIN_STAGE = process.env.REACT_APP_DOMAIN_NAME ?? "";
 
+export const API_DOMAIN_PREFIX = process.env.REACT_APP_API_DOMAIN_PREFIX ?? "mykaterag";
+export const API_BASE_DOMAIN = process.env.REACT_APP_API_BASE_DOMAIN ?? "dev3.rrz.aws.infra003.com";
 // PROD APP PATH
-export const API_DOMAIN = "mykaterag.dev3.rrz.aws.infra003.com";
+export const API_DOMAIN = [API_DOMAIN_PREFIX, API_BASE_DOMAIN].join(".");
 
 // COGNITO SETUP
-export const COGNITO_CLIENT_ID = "4tehjk3k27fqu8tve52pdb10ib";
-export const COGNITO_DOMAIN =
-  "rrz-dev-testing.auth.eu-central-1.amazoncognito.com";
-export const JWKS_DOMAIN = "cognito-idp.eu-central-1:.amazonaws.com";
-export const USER_POOL_ID = "eu-central-1_ghd5oT6yK";
+export const COGNITO_CLIENT_ID = process.env.REACT_APP_COGNITO_CLIENT_ID ?? "4tehjk3k27fqu8tve52pdb10ib";
+export const COGNITO_DOMAIN = process.env.REACT_APP_COGNITO_DOMAIN ?? "rrz-dev-testing.auth.eu-central-1.amazoncognito.com";
+export const JWKS_DOMAIN = process.env.REACT_APP_JWKS_DOMAIN ?? "cognito-idp.eu-central-1:.amazonaws.com";
+export const USER_POOL_ID = process.env.REACT_APP_USER_POOL_ID ?? "eu-central-1_ghd5oT6yK";

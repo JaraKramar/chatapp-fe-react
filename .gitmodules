@@ -1,15 +1,3 @@
-[submodule "terraform/modules/aws-tf-module-ecs"]
-	path = terraform/modules/aws-tf-module-ecs
-	url = https://github.com/KBC-Group-CSOB/aws-tf-module-ecs
-[submodule "terraform/modules/aws-tf-module-kms"]
-	path = terraform/modules/aws-tf-module-kms
-	url = https://github.com/KBC-Group-CSOB/aws-tf-module-kms
-[submodule "terraform/modules/aws-tf-module-api-gateway"]
-	path = terraform/modules/aws-tf-module-api-gateway
-	url = https://github.com/KBC-Group-CSOB/aws-tf-module-api-gateway
-[submodule "terraform/modules/aws-tf-module-s3"]
-	path = terraform/modules/aws-tf-module-s3
+[submodule "terraform/submodules/aws-tf-module-s3"]
+	path = terraform/submodules/aws-tf-module-s3
 	url = https://github.com/KBC-Group-CSOB/aws-tf-module-s3.git
-[submodule "terraform/modules/aws-tf-module-lambda"]
-	path = terraform/modules/aws-tf-module-lambda
-	url = https://github.com/KBC-Group-CSOB/aws-tf-module-lambda.git
