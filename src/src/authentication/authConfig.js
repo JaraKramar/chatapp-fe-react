@@ -3,7 +3,7 @@ import {API_DOMAIN, COGNITO_CLIENT_ID, COGNITO_DOMAIN, JWKS_DOMAIN, USER_POOL_ID
 export const authConfig = {
   accessTokenExpiringNotificationTimeInSeconds: 60,
   authority: `https://${COGNITO_DOMAIN}`,
-  COGNITO_CLIENT_ID: `${COGNITO_CLIENT_ID}`,
+  client_id: `${COGNITO_CLIENT_ID}`,
   redirect_uri: `https://${API_DOMAIN}/callback`,
   post_logout_redirect_uri: `https://${API_DOMAIN}/`,
   response_type: 'code',
