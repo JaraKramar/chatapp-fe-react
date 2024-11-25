@@ -58,8 +58,8 @@ export const API_DOMAIN_STAGE = process.env.REACT_APP_DOMAIN_NAME ?? "";
 export const API_DOMAIN_PREFIX = process.env.REACT_APP_API_DOMAIN_PREFIX ?? "mykaterag";
 export const API_BASE_DOMAIN = process.env.REACT_APP_API_BASE_DOMAIN ?? "dev3.rrz.aws.infra003.com";
 // PROD APP PATH
-export const API_DOMAIN = [API_DOMAIN_PREFIX, API_BASE_DOMAIN].join(".");
-
+// export const API_DOMAIN = [API_DOMAIN_PREFIX, API_BASE_DOMAIN].join(".");
+export const API_DOMAIN = API_BASE_DOMAIN;
 // COGNITO SETUP
 export const COGNITO_CLIENT_ID = process.env.REACT_APP_COGNITO_CLIENT_ID ?? "4tehjk3k27fqu8tve52pdb10ib";
 export const COGNITO_DOMAIN = process.env.REACT_APP_COGNITO_DOMAIN ?? "rrz-dev-testing.auth.eu-central-1.amazoncognito.com";
