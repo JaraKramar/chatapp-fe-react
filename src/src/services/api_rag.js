@@ -35,10 +35,26 @@ const fetchRAGResponse = async (
       user: _user?.profile?.["cognito:username"] || "",
       email: _user?.profile?.email || "",
     };
-    // Send the request to the backend API
-    const raw = await axios.post(`https://${API_DOMAIN}/backend`, requestBody, {
-      headers: _header,
-    });
+
+    try {
+      // Send the request to the backend API
+      const raw = await axios.post(
+        `https://${API_DOMAIN}/backend`,
+        requestBody,
+        {
+          headers: _header,
+        }
+      );
+    } catch (error) {
+      console.error("ERROR:", error.message);
+      const raw = {
+        data: {
+          response: {},
+          context: [],
+          status: 500,
+        },
+      };
+    }
 
     // TEST DATA: do not remove
     // const raw = {
