@@ -51,7 +51,7 @@ const fetchRAGResponse = async (
         data: {
           response: {},
           context: [],
-          status: 500,
+          status: error.status,
         },
       };
     }
