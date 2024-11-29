@@ -15,7 +15,8 @@ const Message = ({ key, menu, chat_data }) => {
     <Box p={3}>
       <Stack spacing={3}>
         {chat_data.messages.map((el, index) => {
-          // console.log(el)
+          console.log(el)
+          // bug is on next line
           switch (el.role) {
             case "divider":
               return <TimeLine el={el} />;

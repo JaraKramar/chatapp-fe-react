@@ -10,7 +10,7 @@ import {
   userManager,
 } from "../../authentication/authService";
 import { useEffect } from "react"; // useEffect and useState added
-import Page403 from "../../components/Page403";
+import Page403 from "../../pages/Page403";
 import { user } from "../../services/auth";
 
 const DashboardLayout = () => {
@@ -21,7 +21,6 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     if (signoutStatus) {
-      // revokeTokens();
       removeUser();
       signoutRedirect();
     }
